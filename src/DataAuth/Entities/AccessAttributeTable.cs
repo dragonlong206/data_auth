@@ -1,11 +1,11 @@
-﻿using Domain.Base;
+﻿using DataAuth.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace DataAuth.Entities
 {
     public class AccessAttributeTable : BaseEntity<int>
     {
@@ -18,7 +18,20 @@ namespace Domain.Entities
             NameColumn = nameColumn;
         }
 
+        public AccessAttributeTable(int accessAttributeId, string tableName, string alias, string idColumn, string nameColumn
+            , string? parentColumn, int hierarchyLevel, string? localPermissionTableName, string? localPermissionIdColumn, string? localPermissionLookupColumn)
+            : this(accessAttributeId, tableName, alias, idColumn, nameColumn)
+        {
+            ParentColumn = parentColumn;
+            HierarchyLevel = hierarchyLevel;
+            LocalPermissionTableName = localPermissionTableName;
+            LocalPermissionIdColumn = localPermissionIdColumn;
+            LocalPermissionLookupColumn = localPermissionLookupColumn;
+        }
+
         public int AccessAttributeId { get; set; }
+
+        public AccessAttribute? AccessAttribute { get; set; }
 
         /// <summary>
         /// The database table name of the data that is used as filter for data.
@@ -33,7 +46,7 @@ namespace Domain.Entities
 
         public string? ParentColumn { get; set; }
 
-        public int HiearchyLevel { get; set; }
+        public int HierarchyLevel { get; set; }
 
         public string? LocalPermissionTableName { get; set; }
 

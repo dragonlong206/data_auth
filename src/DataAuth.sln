@@ -5,9 +5,9 @@ VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAuth", "DataAuth\DataAuth.csproj", "{CB9A5A57-3E6B-4956-B9B1-63D4D952763C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAuth.Test.WebApi", "DataAuth.Test.WebApi\DataAuth.Test.WebApi.csproj", "{452B2B92-6349-472A-9D3A-071A783D5B8C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAuth.Test.UnitTest", "DataAuth.Test.UnitTest\DataAuth.Test.UnitTest.csproj", "{1A2B83EB-8EF0-4641-81CE-01FE9233E265}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAuth.Test.UnitTest", "DataAuth.Test.UnitTest\DataAuth.Test.UnitTest.csproj", "{1A2B83EB-8EF0-4641-81CE-01FE9233E265}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAuth.Sample.WebApi", "DataAuth.Sample.WebApi\DataAuth.Sample.WebApi.csproj", "{D2739FF3-4230-43BA-9413-5F54EFA48745}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{CB9A5A57-3E6B-4956-B9B1-63D4D952763C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB9A5A57-3E6B-4956-B9B1-63D4D952763C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB9A5A57-3E6B-4956-B9B1-63D4D952763C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{452B2B92-6349-472A-9D3A-071A783D5B8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{452B2B92-6349-472A-9D3A-071A783D5B8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{452B2B92-6349-472A-9D3A-071A783D5B8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{452B2B92-6349-472A-9D3A-071A783D5B8C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1A2B83EB-8EF0-4641-81CE-01FE9233E265}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1A2B83EB-8EF0-4641-81CE-01FE9233E265}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A2B83EB-8EF0-4641-81CE-01FE9233E265}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A2B83EB-8EF0-4641-81CE-01FE9233E265}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2739FF3-4230-43BA-9413-5F54EFA48745}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2739FF3-4230-43BA-9413-5F54EFA48745}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2739FF3-4230-43BA-9413-5F54EFA48745}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2739FF3-4230-43BA-9413-5F54EFA48745}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

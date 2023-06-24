@@ -1,5 +1,4 @@
-﻿using DataAuth.Dto;
-using Domain.Enums;
+﻿using DataAuth.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +9,11 @@ namespace DataAuth.Core
 {
     internal class Authorizer
     {
-        public static IEnumerable<AuthorizationResponse> GetGrantedData(string subjectId, GrantType grantType)
-        {
+        //public static IEnumerable<DataPermissionResult<TD> GetGrantedData(string subjectId, GrantType grantType)
+        //{
 
 
-            return Enumerable.Empty<AuthorizationResponse>();
-        }
+        //    return Enumerable.Empty<DataPermissionResult>();
+        //}
     }
 }

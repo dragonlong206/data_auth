@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace DataAuth.Base
 {
-    public class BaseEntity<TKey>
+    public class BaseModel<TKey>
     {
-        public TKey Id { get; set; }
+        public TKey Id { get; internal set; }
     }
 }
