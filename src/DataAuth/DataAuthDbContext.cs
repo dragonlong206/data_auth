@@ -20,6 +20,11 @@ namespace DataAuth
                 .HasIndex(a => a.Code)
                 .IsUnique();
 
+            // Make alias to be unique to avoid alias duplication when building query
+            modelBuilder.Entity<AccessAttributeTable>()
+                .HasIndex(a => a.Alias)
+                .IsUnique();
+
             base.OnModelCreating(modelBuilder);
         }
 

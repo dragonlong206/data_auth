@@ -46,6 +46,14 @@ namespace DataAuth.Entities
 
         public string? ParentColumn { get; set; }
 
+        /// <summary>
+        /// A table is self reference if the foreign key point to the table itself.
+        /// </summary>
+        public bool IsSelfReference { get; set; }
+
+        /// <summary>
+        /// Hierarchy level for hierarchy data. Hierarchy level starts from 0 for root node and increases 1 for each level in the hierarchy.
+        /// </summary>
         public int HierarchyLevel { get; set; }
 
         public string? LocalPermissionTableName { get; set; }

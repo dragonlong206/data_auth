@@ -2,11 +2,11 @@
 
 namespace DataAuth.Core
 {
-    public class DataPermissionResult<TData> where TData : struct
+    public class DataPermissionResult<TKey> where TKey : struct
     {
         public DataPermissionResult()
         {
-            PermissionDetails = new List<DataPermissionResultDetail<TData>>();
+            PermissionDetails = new List<DataPermissionResultDetail<TKey>>();
         }
 
         /// <summary>
@@ -22,12 +22,12 @@ namespace DataAuth.Core
         /// <summary>
         /// The list of granted IDs
         /// </summary>
-        public IEnumerable<TData>? GrantedValues { get; set; }
+        public IEnumerable<TKey>? GrantedValues { get; set; }
 
-        IEnumerable<DataPermissionResultDetail<TData>> PermissionDetails { get; set; }
+        IEnumerable<DataPermissionResultDetail<TKey>> PermissionDetails { get; set; }
     }
 
-    public class DataPermissionResultDetail<TData> where TData: struct
+    public class DataPermissionResultDetail<TKey> where TKey: struct
     {
         /// <summary>
         /// Name of database table containing granted data.
@@ -44,6 +44,6 @@ namespace DataAuth.Core
         /// <summary>
         /// The list of granted IDs
         /// </summary>
-        public IEnumerable<TData>? GrantedValues { get; set; }
+        public IEnumerable<TKey>? GrantedValues { get; set; }
     }
 }
