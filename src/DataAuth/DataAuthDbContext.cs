@@ -1,10 +1,5 @@
 ﻿using DataAuth.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAuth
 {
@@ -16,6 +11,11 @@ namespace DataAuth
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                entityType.SetTableName("DataAuth_" + entityType.GetTableName());
+            }
+
             modelBuilder.Entity<AccessAttribute>()
                 .HasIndex(a => a.Code)
                 .IsUnique();

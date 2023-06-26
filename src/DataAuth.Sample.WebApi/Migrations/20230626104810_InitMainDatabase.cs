@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace DataAuth.Sample.WebApi.Migrations.ApplicationDb
+namespace DataAuth.Sample.WebApi.Migrations
 {
     /// <inheritdoc />
     public partial class InitMainDatabase : Migration
@@ -10,6 +10,26 @@ namespace DataAuth.Sample.WebApi.Migrations.ApplicationDb
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Departments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParentDepartmentId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Departments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Departments_Departments_ParentDepartmentId",
+                        column: x => x.ParentDepartmentId,
+                        principalTable: "Departments",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateTable(
                 name: "Regions",
                 columns: table => new
@@ -67,6 +87,11 @@ namespace DataAuth.Sample.WebApi.Migrations.ApplicationDb
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Departments_ParentDepartmentId",
+                table: "Departments",
+                column: "ParentDepartmentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Provinces_RegionId",
                 table: "Provinces",
                 column: "RegionId");
@@ -80,6 +105,9 @@ namespace DataAuth.Sample.WebApi.Migrations.ApplicationDb
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Departments");
+
             migrationBuilder.DropTable(
                 name: "Stores");
 

@@ -19,7 +19,7 @@ namespace DataAuth.Entities
         }
 
         public AccessAttributeTable(int accessAttributeId, string tableName, string alias, string idColumn, string nameColumn
-            , string? parentColumn, int hierarchyLevel, string? localPermissionTableName, string? localPermissionIdColumn, string? localPermissionLookupColumn)
+            , string? parentColumn, int? hierarchyLevel, string? localPermissionTableName = null, string? localPermissionIdColumn = null, string? localPermissionLookupColumn = null)
             : this(accessAttributeId, tableName, alias, idColumn, nameColumn)
         {
             ParentColumn = parentColumn;
@@ -54,7 +54,7 @@ namespace DataAuth.Entities
         /// <summary>
         /// Hierarchy level for hierarchy data. Hierarchy level starts from 0 for root node and increases 1 for each level in the hierarchy.
         /// </summary>
-        public int HierarchyLevel { get; set; }
+        public int? HierarchyLevel { get; set; }
 
         public string? LocalPermissionTableName { get; set; }
 

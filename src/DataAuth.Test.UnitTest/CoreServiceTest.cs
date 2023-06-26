@@ -1,3 +1,5 @@
+using DataAuth.AccessAttributes;
+using DataAuth.AccessAttributeTables;
 using DataAuth.Core;
 using DataAuth.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +12,7 @@ namespace DataAuth.Test.UnitTest
     [TestClass]
     public class CoreServiceTest
     {
+        DataAuthDbContext _dbContext;
         ICoreService _coreService;
 
         public CoreServiceTest()
@@ -17,8 +20,8 @@ namespace DataAuth.Test.UnitTest
             var options = new DbContextOptionsBuilder<DbContext>()
                 .UseInMemoryDatabase(databaseName: "DataAuthTest")
                 .Options;
-            var dbContext = new DataAuthDbContext(options);
-            _coreService = new CoreService(dbContext);
+            _dbContext = new DataAuthDbContext(options);
+            _coreService = new CoreService(_dbContext);
         }
 
         [TestCategory("GenerateQuery")]
@@ -37,34 +40,94 @@ namespace DataAuth.Test.UnitTest
         {
             var permission = new DataPermission(Enums.GrantType.ForUser, "1", 1, Enums.AccessLevel.Local);
             permission.AccessAttributeTable = new AccessAttributeTable(1, "Stores", "s", "Id", "Name", null, 1, "Employees", "Id", "LastWorkingStoreId");
-            var query = await _coreService.GenerateQueryString(permission, "100");
+            var lookupValue = "999";
+            var query = await _coreService.GenerateQueryString(permission, lookupValue);
             Assert.AreEqual("SELECT s.[Id] FROM [Stores] AS s\nWHERE s.[Id] IN (SELECT [LastWorkingStoreId] FROM [Employees] WHERE [Id] = @LookupValue)", query.QueryString);
             Assert.IsNotNull(query.QueryParams);
             Assert.AreEqual(1, query.QueryParams.Count);
             Assert.AreEqual("LookupValue", query.QueryParams[0].ParameterName);
-            Assert.AreEqual("100", query.QueryParams[0].Value);
+            Assert.AreEqual(lookupValue, query.QueryParams[0].Value);
         }
 
-        [TestInitialize]
+        [TestCategory("GenerateQuery")]
+        [TestMethod]
+        public async Task SpecificLevel()
+        {
+            var permission = new DataPermission(Enums.GrantType.ForUser, "1", 1, Enums.AccessLevel.Specific, "999");
+            permission.AccessAttributeTable = new AccessAttributeTable(1, "Stores", "s", "Id", "Name", null, 1, "Employees", "Id", "LastWorkingStoreId");
+            var query = await _coreService.GenerateQueryString(permission);
+            Assert.AreEqual("SELECT s.[Id] FROM [Stores] AS s\nWHERE s.[Id] = @LookupValue", query.QueryString);
+            Assert.IsNotNull(query.QueryParams);
+            Assert.AreEqual(1, query.QueryParams.Count);
+            Assert.AreEqual("LookupValue", query.QueryParams[0].ParameterName);
+            Assert.AreEqual("999", query.QueryParams[0].Value);
+        }
+
+        [TestCategory("GenerateQuery")]
+        [TestMethod]
+        public async Task DeepLevel_SelfReference()
+        {
+            var lookupValue = "999";
+            var permission = new DataPermission(Enums.GrantType.ForUser, "1", 1, Enums.AccessLevel.Deep, lookupValue)
+            {
+                AccessAttributeTable = new AccessAttributeTable(1, "Departments", "d", "Id", "Name", "ParentDepartmentId", null)
+                {
+                    IsSelfReference = true
+                }
+            };
+            var query = await _coreService.GenerateQueryString(permission);
+            var expectedQuery = ";WITH cte AS" +
+                $"(SELECT [Id], [ParentDepartmentId] FROM [Departments] WHERE [Id] = @LookupValue" +
+                $"UNION ALL" +
+                $"SELECT t2.[Id], t2.[ParentDepartmentId] FROM cte t1" +
+                $"JOIN [Departments] t2 ON t1.[Id] = t2.[ParentDepartmentId])" +
+                $"SELECT [Id] FROM cte" +
+                $"OPTION (MAXRECURSION 20)"; ;
+            Assert.AreEqual(expectedQuery, query.QueryString);
+            Assert.IsNotNull(query.QueryParams);
+            Assert.AreEqual(1, query.QueryParams.Count);
+            Assert.AreEqual("LookupValue", query.QueryParams[0].ParameterName);
+            Assert.AreEqual(lookupValue, query.QueryParams[0].Value);
+        }
 
         [TestCategory("GenerateQuery")]
         [TestMethod]
         public async Task DeepLevel_LevelSeparatedHierarchy()
         {
             // Initialize
+            var attribute = new AccessAttributeModel
+            {
+                Code = "STORE"
+            };
+            var accessAttributeService = new AccessAttributeService(_dbContext);
+            await accessAttributeService.AddAccessAttribute(attribute);
+
+            var accessAttributeTableService = new AccessAttributeTableService(_dbContext);
+            var attributeTable1 = new AccessAttributeTableModel(attribute.Id, "Regions", "r", "Id", "Name", null, 1, null, null, null);
+            await accessAttributeTableService.AddAccessAttributeTable(attributeTable1);
+            var attributeTable2 = new AccessAttributeTableModel(attribute.Id, "Provinces", "p", "Id", "Name", "RegionId", 2, null, null, null);
+            await accessAttributeTableService.AddAccessAttributeTable(attributeTable2);
+            var attributeTable3 = new AccessAttributeTableModel(attribute.Id, "Stores", "s", "Id", "Name", "ProvinceId", 3, null, null, null);
+            await accessAttributeTableService.AddAccessAttributeTable(attributeTable3);
+            var rootAttributeTable = await accessAttributeTableService.GetAccessAttributeTable(attributeTable1.Id);
 
             // Exec
-            //var permission = new DataPermission(Enums.GrantType.ForUser, "1", 1, Enums.AccessLevel.Local);
-            //permission.AccessAttributeTable = new AccessAttributeTable(1, "Stores", "s", "Id", "Name", null, 1, "Employees", "Id", "LastWorkingStoreId");
-            //var query = await _coreService.GenerateQueryString(permission, "100");
+            var lookupValue = "999";
+            var permission = new DataPermission(Enums.GrantType.ForUser, "1", attributeTable3.Id, Enums.AccessLevel.Deep, lookupValue)
+            {
+                AccessAttributeTable = rootAttributeTable
+            };
+            var (QueryString, QueryParams) = await _coreService.GenerateQueryString(permission);
 
-            // Cleanup
-
-            //Assert.AreEqual("SELECT s.[Id] FROM [Stores] AS s\nWHERE s.[Id] IN (SELECT [LastWorkingStoreId] FROM [Employees] WHERE [Id] = @LookupValue)", query.QueryString);
-            //Assert.IsNotNull(query.QueryParams);
-            //Assert.AreEqual(1, query.QueryParams.Count);
-            //Assert.AreEqual("LookupValue", query.QueryParams[0].ParameterName);
-            //Assert.AreEqual("100", query.QueryParams[0].Value);
+            var expectedResult = "SELECT r.[Id] FROM [Regions] AS r"
+                + "\n\tJOIN [Provinces] AS p ON r.[Id] = p.[RegionId]"
+                + "\n\tJOIN [Stores] AS s ON p.[Id] = s.[ProvinceId]"
+                + "\nWHERE r.[Id] = @LookupValue";
+            Assert.AreEqual(expectedResult, QueryString);
+            Assert.IsNotNull(QueryParams);
+            Assert.AreEqual(1, QueryParams.Count);
+            Assert.AreEqual("LookupValue", QueryParams[0].ParameterName);
+            Assert.AreEqual(lookupValue, QueryParams[0].Value);
         }
 
         [TestCategory("CreateJoinQueryForHierarchy")]

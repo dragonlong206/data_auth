@@ -13,6 +13,17 @@ namespace DataAuth.AccessAttributeTables
             NameColumn = nameColumn;
         }
 
+        public AccessAttributeTableModel(int accessAttributeId, string tableName, string alias, string idColumn, string nameColumn
+           , string? parentColumn, int? hierarchyLevel, string? localPermissionTableName, string? localPermissionIdColumn, string? localPermissionLookupColumn)
+           : this(accessAttributeId, tableName, alias, idColumn, nameColumn)
+        {
+            ParentColumn = parentColumn;
+            HierarchyLevel = hierarchyLevel;
+            LocalPermissionTableName = localPermissionTableName;
+            LocalPermissionIdColumn = localPermissionIdColumn;
+            LocalPermissionLookupColumn = localPermissionLookupColumn;
+        }
+
         public int AccessAttributeId { get; set; }
 
         /// <summary>
@@ -28,7 +39,7 @@ namespace DataAuth.AccessAttributeTables
 
         public string? ParentColumn { get; set; }
 
-        public int HierarchyLevel { get; set; }
+        public int? HierarchyLevel { get; set; }
 
         public string? LocalPermissionTableName { get; set; }
 
