@@ -39,7 +39,7 @@ namespace DataAuth.Test.UnitTest
         public async Task LocalLevel()
         {
             var permission = new DataPermission(Enums.GrantType.ForUser, "1", 1, Enums.AccessLevel.Local);
-            permission.AccessAttributeTable = new AccessAttributeTable(1, "Stores", "s", "Id", "Name", null, 1, "Employees", "Id", "LastWorkingStoreId");
+            permission.AccessAttributeTable = new AccessAttributeTable(1, "Stores", "s", "Id", "Name", false, null, 1, true, "Employees", "Id", "LastWorkingStoreId");
             var lookupValue = "999";
             var query = await _coreService.GenerateQueryString(permission, lookupValue);
             Assert.AreEqual("SELECT s.[Id] FROM [Stores] AS s\nWHERE s.[Id] IN (SELECT [LastWorkingStoreId] FROM [Employees] WHERE [Id] = @LookupValue)", query.QueryString);
@@ -54,7 +54,7 @@ namespace DataAuth.Test.UnitTest
         public async Task SpecificLevel()
         {
             var permission = new DataPermission(Enums.GrantType.ForUser, "1", 1, Enums.AccessLevel.Specific, "999");
-            permission.AccessAttributeTable = new AccessAttributeTable(1, "Stores", "s", "Id", "Name", null, 1, "Employees", "Id", "LastWorkingStoreId");
+            permission.AccessAttributeTable = new AccessAttributeTable(1, "Stores", "s", "Id", "Name", false, null, 1, true, "Employees", "Id", "LastWorkingStoreId");
             var query = await _coreService.GenerateQueryString(permission);
             Assert.AreEqual("SELECT s.[Id] FROM [Stores] AS s\nWHERE s.[Id] = @LookupValue", query.QueryString);
             Assert.IsNotNull(query.QueryParams);
@@ -70,19 +70,16 @@ namespace DataAuth.Test.UnitTest
             var lookupValue = "999";
             var permission = new DataPermission(Enums.GrantType.ForUser, "1", 1, Enums.AccessLevel.Deep, lookupValue)
             {
-                AccessAttributeTable = new AccessAttributeTable(1, "Departments", "d", "Id", "Name", "ParentDepartmentId", null)
-                {
-                    IsSelfReference = true
-                }
+                AccessAttributeTable = new AccessAttributeTable(1, "Departments", "d", "Id", "Name", true, "ParentDepartmentId", null)
             };
             var query = await _coreService.GenerateQueryString(permission);
             var expectedQuery = ";WITH cte AS" +
-                $"(SELECT [Id], [ParentDepartmentId] FROM [Departments] WHERE [Id] = @LookupValue" +
-                $"UNION ALL" +
-                $"SELECT t2.[Id], t2.[ParentDepartmentId] FROM cte t1" +
-                $"JOIN [Departments] t2 ON t1.[Id] = t2.[ParentDepartmentId])" +
-                $"SELECT [Id] FROM cte" +
-                $"OPTION (MAXRECURSION 20)"; ;
+                $"\n(SELECT [Id], [ParentDepartmentId] FROM [Departments] WHERE [Id] = @LookupValue" +
+                $"\nUNION ALL" +
+                $"\nSELECT t2.[Id], t2.[ParentDepartmentId] FROM cte t1" +
+                $"\nJOIN [Departments] t2 ON t1.[Id] = t2.[ParentDepartmentId])" +
+                $"\nSELECT [Id] FROM cte" +
+                $"\nOPTION (MAXRECURSION 20)"; ;
             Assert.AreEqual(expectedQuery, query.QueryString);
             Assert.IsNotNull(query.QueryParams);
             Assert.AreEqual(1, query.QueryParams.Count);
@@ -103,11 +100,11 @@ namespace DataAuth.Test.UnitTest
             await accessAttributeService.AddAccessAttribute(attribute);
 
             var accessAttributeTableService = new AccessAttributeTableService(_dbContext);
-            var attributeTable1 = new AccessAttributeTableModel(attribute.Id, "Regions", "r", "Id", "Name", null, 1, null, null, null);
+            var attributeTable1 = new AccessAttributeTableModel(attribute.Id, "Regions", "r", "Id", "Name", false, null, 1, false, null, null, null);
             await accessAttributeTableService.AddAccessAttributeTable(attributeTable1);
-            var attributeTable2 = new AccessAttributeTableModel(attribute.Id, "Provinces", "p", "Id", "Name", "RegionId", 2, null, null, null);
+            var attributeTable2 = new AccessAttributeTableModel(attribute.Id, "Provinces", "p", "Id", "Name", false, "RegionId", 2, false, null, null, null);
             await accessAttributeTableService.AddAccessAttributeTable(attributeTable2);
-            var attributeTable3 = new AccessAttributeTableModel(attribute.Id, "Stores", "s", "Id", "Name", "ProvinceId", 3, null, null, null);
+            var attributeTable3 = new AccessAttributeTableModel(attribute.Id, "Stores", "s", "Id", "Name", false, "ProvinceId", 3, true, null, null, null);
             await accessAttributeTableService.AddAccessAttributeTable(attributeTable3);
             var rootAttributeTable = await accessAttributeTableService.GetAccessAttributeTable(attributeTable1.Id);
 
@@ -119,7 +116,7 @@ namespace DataAuth.Test.UnitTest
             };
             var (QueryString, QueryParams) = await _coreService.GenerateQueryString(permission);
 
-            var expectedResult = "SELECT r.[Id] FROM [Regions] AS r"
+            var expectedResult = "SELECT s.[Id] FROM [Regions] AS r"
                 + "\n\tJOIN [Provinces] AS p ON r.[Id] = p.[RegionId]"
                 + "\n\tJOIN [Stores] AS s ON p.[Id] = s.[ProvinceId]"
                 + "\nWHERE r.[Id] = @LookupValue";
@@ -155,10 +152,10 @@ namespace DataAuth.Test.UnitTest
         public void OneLowerLevel()
         {
             var currentQuery = "SELECT r.[Id] FROM [Regions] AS r";
-            var rootTable = new AccessAttributeTable(1, "Regions", "r", "Id", "Name", null, 1, null, null, null);
+            var rootTable = new AccessAttributeTable(1, "Regions", "r", "Id", "Name", false, null, 1, false, null, null, null);
             var lowerLevelTables = new List<AccessAttributeTable>
             {
-                new AccessAttributeTable(2, "Provinces", "p", "Id", "Name", "RegionId", 2, null, null, null)
+                new AccessAttributeTable(2, "Provinces", "p", "Id", "Name", false, "RegionId", 2, false, null, null, null)
             };
             var joinQuery = CoreService.CreateJoinQueryForHierarchy(currentQuery, rootTable, lowerLevelTables);
             var expectedResult = currentQuery + "\n\tJOIN [Provinces] AS p ON r.[Id] = p.[RegionId]";
@@ -170,11 +167,11 @@ namespace DataAuth.Test.UnitTest
         public void TwoLowerLevels()
         {
             var currentQuery = "SELECT r.[Id] FROM [Regions] AS r";
-            var rootTable = new AccessAttributeTable(1, "Regions", "r", "Id", "Name", null, 1, null, null, null);
+            var rootTable = new AccessAttributeTable(1, "Regions", "r", "Id", "Name", false, null, 1, false, null, null, null);
             var lowerLevelTables = new List<AccessAttributeTable>
             {
-                new AccessAttributeTable(2, "Provinces", "p", "Id", "Name", "RegionId", 2, null, null, null),
-                new AccessAttributeTable(3, "Stores", "s", "Id", "Name", "ProvinceId", 3, null, null, null)
+                new AccessAttributeTable(2, "Provinces", "p", "Id", "Name", false, "RegionId", 2, false, null, null, null),
+                new AccessAttributeTable(3, "Stores", "s", "Id", "Name", false, "ProvinceId", 3, true, null, null, null)
             };
             var joinQuery = CoreService.CreateJoinQueryForHierarchy(currentQuery, rootTable, lowerLevelTables);
             var expectedResult = currentQuery

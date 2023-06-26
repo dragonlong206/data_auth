@@ -15,7 +15,7 @@ namespace DataAuth.Core
             _dbContext = dbContext;
         }
 
-        public async Task<DataPermissionResult<TKey>> GetDataPermissions<TKey>(string subjectId, GrantType grantType, string accessAttributeCode, string? localLookupValue = null, CancellationToken cancellationToken = default) where TKey : struct
+        public async Task<DataPermissionResult<TKey>> GetDataPermissions<TKey>(string subjectId, string accessAttributeCode, GrantType grantType = GrantType.ForUser, string? localLookupValue = null, CancellationToken cancellationToken = default) where TKey : struct
         {
             var result = new DataPermissionResult<TKey>();
             var dataPermissions = await _dbContext.DataPermissions.AsNoTracking()
@@ -28,7 +28,7 @@ namespace DataAuth.Core
                 foreach (var permission in dataPermissions)
                 {
                     var query = await GenerateQueryString(permission);
-                    var grantedData = await _dbContext.Database.SqlQueryRaw<TKey>(query.QueryString, query.QueryParams.Select(x => x.Value).ToArray()).ToListAsync(cancellationToken);
+                    var grantedData = await _dbContext.Database.SqlQueryRaw<TKey>(query.QueryString, query.QueryParams.ToArray()).ToListAsync(cancellationToken);
                     var resultDetail = new DataPermissionResultDetail<TKey>()
                     {
                         AccessLevel = permission.AccessLevel,
@@ -53,13 +53,13 @@ namespace DataAuth.Core
             {
                 case AccessLevel.Local:
                     // With local permission, look up to local permission table to get local permission value
-                    query = CreateSelectQueryForAccessAttributeTable(attributeTable) +
+                    query = CreateSelectQuery(attributeTable) +
                         $"\nWHERE {attributeTable.Alias}.[{attributeTable.IdColumn}] IN " +
                         $"(SELECT [{attributeTable.LocalPermissionLookupColumn!}] FROM [{attributeTable.LocalPermissionTableName!}] WHERE [{attributeTable.LocalPermissionIdColumn!}] = @LookupValue)";
                     queryParams.Add(new SqlParameter("LookupValue", localLookupValue!));
                     break;
                 case AccessLevel.Specific:
-                    query = CreateSelectQueryForAccessAttributeTable(attributeTable) +
+                    query = CreateSelectQuery(attributeTable) +
                         $"\nWHERE {attributeTable.Alias}.[{attributeTable.IdColumn}] = @LookupValue";
                     queryParams.Add(new SqlParameter("LookupValue", permission.GrantedDataValue!));
                     break;
@@ -79,14 +79,14 @@ namespace DataAuth.Core
                     }
                     break;
                 case AccessLevel.Global:
-                    query = CreateSelectQueryForAccessAttributeTable(attributeTable);
+                    query = CreateSelectQuery(attributeTable);
                     break;
             }
 
             return (query, queryParams);
         }
 
-        private static string CreateSelectQueryForAccessAttributeTable(AccessAttributeTable tableMetadata)
+        private static string CreateSelectQuery(AccessAttributeTable tableMetadata)
         {
             return $"SELECT {tableMetadata.Alias}.[{tableMetadata.IdColumn}] FROM [{tableMetadata.TableName}] AS {tableMetadata.Alias}";
         }
@@ -96,12 +96,12 @@ namespace DataAuth.Core
             var attributeTable = permission.AccessAttributeTable!;
             // Recursive cte with max recursion level = 20 to ensure performance
             var query = $";WITH cte AS" +
-                $"(SELECT [{attributeTable.IdColumn}], [{attributeTable.ParentColumn}] FROM [{attributeTable.TableName}] WHERE [{attributeTable.IdColumn}] = @LookupValue" +
-                $"UNION ALL" +
-                $"SELECT t2.[{attributeTable.IdColumn}], t2.[{attributeTable.ParentColumn}] FROM cte t1" +
-                $"JOIN [{attributeTable.TableName}] t2 ON t1.[{attributeTable.IdColumn}] = t2.[{attributeTable.ParentColumn}])" +
-                $"SELECT [{attributeTable.IdColumn}] FROM cte" +
-                $"OPTION (MAXRECURSION 20)";
+                $"\n(SELECT [{attributeTable.IdColumn}], [{attributeTable.ParentColumn}] FROM [{attributeTable.TableName}] WHERE [{attributeTable.IdColumn}] = @LookupValue" +
+                $"\nUNION ALL" +
+                $"\nSELECT t2.[{attributeTable.IdColumn}], t2.[{attributeTable.ParentColumn}] FROM cte t1" +
+                $"\nJOIN [{attributeTable.TableName}] t2 ON t1.[{attributeTable.IdColumn}] = t2.[{attributeTable.ParentColumn}])" +
+                $"\nSELECT [{attributeTable.IdColumn}] FROM cte" +
+                $"\nOPTION (MAXRECURSION 20)";
 
             var queryParams = new List<SqlParameter>
             {
@@ -125,14 +125,29 @@ namespace DataAuth.Core
         {
             // Get all lower levels in hierarchy from current node
             var rootTable = permission.AccessAttributeTable!;
-            var query = CreateSelectQueryForAccessAttributeTable(rootTable);
-            var lowerLevelTables = await (_dbContext.AccessAttributeTables.AsNoTracking()
+            string query;
+            if (!rootTable.IsLeafLevel)
+            {
+                var lowerLevelTables = await (_dbContext.AccessAttributeTables.AsNoTracking()
                 .Where(x => x.AccessAttributeId == rootTable.AccessAttributeId
                     && x.HierarchyLevel > rootTable.HierarchyLevel)
                 .OrderBy(x => x.HierarchyLevel)
                 .ToListAsync());
-            query = CreateJoinQueryForHierarchy(query, rootTable, lowerLevelTables);
+                var leafLevelTable = lowerLevelTables.FirstOrDefault(x => x.IsLeafLevel);
+                if (leafLevelTable == null)
+                {
+                    throw new Exception("Missing leaf level table for this access attribute!");
+                }
+                query = $"SELECT {leafLevelTable.Alias}.[{leafLevelTable.IdColumn}] FROM [{rootTable.TableName}] AS {rootTable.Alias}";
+                query = CreateJoinQueryForHierarchy(query, rootTable, lowerLevelTables);
+
+            }
+            else
+            {
+                query = CreateSelectQuery(rootTable);
+            }
             query += $"\nWHERE {rootTable.Alias}.[{rootTable.IdColumn}] = @LookupValue";
+
             var queryParams = new List<SqlParameter>
             {
                 new SqlParameter("LookupValue", permission.GrantedDataValue!)

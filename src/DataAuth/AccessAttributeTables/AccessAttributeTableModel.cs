@@ -4,21 +4,18 @@ namespace DataAuth.AccessAttributeTables
 {
     public class AccessAttributeTableModel : BaseModel<int>
     {
-        public AccessAttributeTableModel(int accessAttributeId, string tableName, string alias, string idColumn, string nameColumn)
+        public AccessAttributeTableModel(int accessAttributeId, string tableName, string alias, string idColumn, string nameColumn, bool isSelfReference
+           , string? parentColumn, int? hierarchyLevel, bool isLeafLevel, string? localPermissionTableName, string? localPermissionIdColumn, string? localPermissionLookupColumn)
         {
             AccessAttributeId = accessAttributeId;
             TableName = tableName;
             Alias = alias;
             IdColumn = idColumn;
             NameColumn = nameColumn;
-        }
-
-        public AccessAttributeTableModel(int accessAttributeId, string tableName, string alias, string idColumn, string nameColumn
-           , string? parentColumn, int? hierarchyLevel, string? localPermissionTableName, string? localPermissionIdColumn, string? localPermissionLookupColumn)
-           : this(accessAttributeId, tableName, alias, idColumn, nameColumn)
-        {
+            IsSelfReference = isSelfReference;
             ParentColumn = parentColumn;
             HierarchyLevel = hierarchyLevel;
+            IsLeafLevel = isLeafLevel;
             LocalPermissionTableName = localPermissionTableName;
             LocalPermissionIdColumn = localPermissionIdColumn;
             LocalPermissionLookupColumn = localPermissionLookupColumn;
@@ -39,7 +36,11 @@ namespace DataAuth.AccessAttributeTables
 
         public string? ParentColumn { get; set; }
 
+        public bool IsSelfReference { get; set; }
+
         public int? HierarchyLevel { get; set; }
+
+        public bool IsLeafLevel { get; set; }
 
         public string? LocalPermissionTableName { get; set; }
 

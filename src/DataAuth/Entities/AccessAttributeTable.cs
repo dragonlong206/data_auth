@@ -18,12 +18,14 @@ namespace DataAuth.Entities
             NameColumn = nameColumn;
         }
 
-        public AccessAttributeTable(int accessAttributeId, string tableName, string alias, string idColumn, string nameColumn
-            , string? parentColumn, int? hierarchyLevel, string? localPermissionTableName = null, string? localPermissionIdColumn = null, string? localPermissionLookupColumn = null)
+        public AccessAttributeTable(int accessAttributeId, string tableName, string alias, string idColumn, string nameColumn, bool isSelfReference
+            , string? parentColumn, int? hierarchyLevel, bool isLeafLevel = false, string? localPermissionTableName = null, string? localPermissionIdColumn = null, string? localPermissionLookupColumn = null)
             : this(accessAttributeId, tableName, alias, idColumn, nameColumn)
         {
+            IsSelfReference = isSelfReference;
             ParentColumn = parentColumn;
             HierarchyLevel = hierarchyLevel;
+            IsLeafLevel = isLeafLevel;
             LocalPermissionTableName = localPermissionTableName;
             LocalPermissionIdColumn = localPermissionIdColumn;
             LocalPermissionLookupColumn = localPermissionLookupColumn;
@@ -55,6 +57,11 @@ namespace DataAuth.Entities
         /// Hierarchy level for hierarchy data. Hierarchy level starts from 0 for root node and increases 1 for each level in the hierarchy.
         /// </summary>
         public int? HierarchyLevel { get; set; }
+
+        /// <summary>
+        /// One access attribute has only one leaf level table.
+        /// </summary>
+        public bool IsLeafLevel { get; set; }
 
         public string? LocalPermissionTableName { get; set; }
 

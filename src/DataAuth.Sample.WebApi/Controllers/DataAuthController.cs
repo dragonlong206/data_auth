@@ -16,9 +16,9 @@ namespace DataAuth.Sample.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<DataPermissionResult<int>> GetStoreDataPermission(string subjectId, GrantType grantType, string accessAttributeCode, string? localLookupValue = null)
+        public async Task<DataPermissionResult<int>> GetDataPermission(string subjectId, string accessAttributeCode, GrantType grantType = GrantType.ForUser, string? localLookupValue = null)
         {
-            return await _coreService.GetDataPermissions<int>(subjectId, grantType, accessAttributeCode, localLookupValue);
+            return await _coreService.GetDataPermissions<int>(subjectId, accessAttributeCode, grantType, localLookupValue);
         }
     }
 }

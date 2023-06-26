@@ -19,8 +19,8 @@ namespace DataAuth.AccessAttributeTables
 
         public async Task<AccessAttributeTableModel> AddAccessAttributeTable(AccessAttributeTableModel model, CancellationToken cancellationToken = default)
         {
-            var entity = new AccessAttributeTable(model.AccessAttributeId, model.TableName, model.Alias, model.IdColumn, model.NameColumn
-                , model.ParentColumn, model.HierarchyLevel, model.LocalPermissionTableName, model.LocalPermissionIdColumn, model.LocalPermissionLookupColumn);
+            var entity = new AccessAttributeTable(model.AccessAttributeId, model.TableName, model.Alias, model.IdColumn, model.NameColumn, model.IsSelfReference
+                , model.ParentColumn, model.HierarchyLevel, model.IsLeafLevel, model.LocalPermissionTableName, model.LocalPermissionIdColumn, model.LocalPermissionLookupColumn);
             _dbContext.AccessAttributeTables.Add(entity);
             await _dbContext.SaveChangesAsync();
             model.Id = entity.Id;
