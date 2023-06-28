@@ -20,8 +20,16 @@ namespace DataAuth.Core
             var result = new DataPermissionResult<TKey>();
             var dataPermissions = await _dbContext.DataPermissions.AsNoTracking()
                 .Include(x => x.AccessAttributeTable)
-                .ThenInclude(a => a.AccessAttribute)
-                .Where(x => x.SubjectId == subjectId && x.GrantType == grantType && x.AccessAttributeTable!.AccessAttribute!.Code == accessAttributeCode).ToListAsync(cancellationToken);
+                .ThenInclude(a => a!.AccessAttribute)
+                .Where(x => x.SubjectId == subjectId && x.GrantType == grantType && x.AccessAttributeTable!.AccessAttribute!.Code == accessAttributeCode)
+                .ToListAsync(cancellationToken);
+
+            // If subject is user then get all roles of the user and then get all permissions of those roles.
+            if (grantType == GrantType.ForUser)
+            {
+                var dataPermissionOfRoles = await GetPermissionsByRolesOfUser(subjectId, accessAttributeCode, cancellationToken);
+                dataPermissions.AddRange(dataPermissionOfRoles);
+            }
             var allGrantedData = new List<TKey>();
             if (dataPermissions != null && dataPermissions.Any())
             {
@@ -42,6 +50,26 @@ namespace DataAuth.Core
             }
 
             return result;
+        }
+
+        private async Task<List<DataPermission>> GetPermissionsByRolesOfUser(string userId, string accessAttributeCode, CancellationToken cancellationToken)
+        {
+            var roleIdsOfUser = await _dbContext.UserRoles.AsNoTracking()
+                                .Where(x => x.UserId == userId)
+                                .Select(x => x.RoleId)
+                                .ToListAsync(cancellationToken);
+            if (roleIdsOfUser.Any())
+            {
+                var rolePermissions = await _dbContext.DataPermissions.AsNoTracking()
+                    .Include(x => x.AccessAttributeTable)
+                    .ThenInclude(a => a!.AccessAttribute)
+                    .Where(x => roleIdsOfUser.Contains(x.SubjectId)
+                        && (x.GrantType == GrantType.ForRole || x.GrantType == GrantType.ForDataAuthRole)
+                        && x.AccessAttributeTable!.AccessAttribute!.Code == accessAttributeCode)
+                    .ToListAsync(cancellationToken);
+                return rolePermissions;
+            }
+            return new List<DataPermission>();
         }
 
         public async Task<(string QueryString, IList<SqlParameter> QueryParams)> GenerateQueryString(DataPermission permission, string? localLookupValue = null)

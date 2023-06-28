@@ -25,6 +25,14 @@ namespace DataAuth
                 .HasIndex(a => a.Alias)
                 .IsUnique();
 
+            modelBuilder.Entity<Role>()
+                .HasIndex(a => a.Code)
+                .IsUnique();
+
+            modelBuilder.Entity<UserRole>()
+                .HasIndex(x => new {x.UserId, x.RoleId})
+                .IsUnique();
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -33,5 +41,9 @@ namespace DataAuth
         public DbSet<AccessAttributeTable> AccessAttributeTables { get; set; }
 
         public DbSet<DataPermission> DataPermissions { get; set; }
+
+        public DbSet<Role> Roles { get; set; }
+
+        public DbSet<UserRole> UserRoles { get; set; }
     }
 }

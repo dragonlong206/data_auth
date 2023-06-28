@@ -79,7 +79,7 @@ namespace DataAuth.Test.UnitTest
                 $"\nSELECT t2.[Id], t2.[ParentDepartmentId] FROM cte t1" +
                 $"\nJOIN [Departments] t2 ON t1.[Id] = t2.[ParentDepartmentId])" +
                 $"\nSELECT [Id] FROM cte" +
-                $"\nOPTION (MAXRECURSION 20)"; ;
+                $"\nOPTION (MAXRECURSION 20)";
             Assert.AreEqual(expectedQuery, query.QueryString);
             Assert.IsNotNull(query.QueryParams);
             Assert.AreEqual(1, query.QueryParams.Count);
