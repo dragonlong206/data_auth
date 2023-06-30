@@ -4,6 +4,7 @@ using DataAuth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
 {
     [DbContext(typeof(DataAuthDbContext))]
-    partial class DataAuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230630103538_AddUserRoleTables")]
+    partial class AddUserRoleTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -172,7 +175,11 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("RoleId")
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("RoleId1")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -181,7 +188,7 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId1");
 
                     b.HasIndex("UserId", "RoleId")
                         .IsUnique();
@@ -215,9 +222,7 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
                 {
                     b.HasOne("DataAuth.Entities.Role", "Role")
                         .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoleId1");
 
                     b.Navigation("Role");
                 });

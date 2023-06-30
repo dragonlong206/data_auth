@@ -56,7 +56,7 @@ namespace DataAuth.Core
         {
             var roleIdsOfUser = await _dbContext.UserRoles.AsNoTracking()
                                 .Where(x => x.UserId == userId)
-                                .Select(x => x.RoleId)
+                                .Select(x => x.RoleId.ToString())
                                 .ToListAsync(cancellationToken);
             if (roleIdsOfUser.Any())
             {

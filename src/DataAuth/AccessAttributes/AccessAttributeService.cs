@@ -15,11 +15,11 @@ namespace DataAuth.AccessAttributes
             _dbContext = dbContext;
         }
 
-        public async Task<AccessAttributeModel> AddAccessAttribute(AccessAttributeModel model)
+        public async Task<AccessAttributeModel> AddAccessAttribute(AccessAttributeModel model, CancellationToken cancellationToken = default)
         {
             var entity = new AccessAttribute(model.Code, model.Name, model.Description);
-            _dbContext.AccessAttributes.Add(entity);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.AccessAttributes.AddAsync(entity, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
             model.Id = entity.Id;
             return model;
         }

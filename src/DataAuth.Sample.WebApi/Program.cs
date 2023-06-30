@@ -3,7 +3,9 @@ using DataAuth.AccessAttributes;
 using DataAuth.AccessAttributeTables;
 using DataAuth.Core;
 using DataAuth.DataPermissions;
+using DataAuth.Roles;
 using DataAuth.Sample.WebApi;
+using DataAuth.UserRoles;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +23,8 @@ builder.Services.AddScoped<ICoreService, CoreService>();
 builder.Services.AddScoped<IAccessAttributeService, AccessAttributeService>();
 builder.Services.AddScoped<IAccessAttributeTableService, AccessAttributeTableService>();
 builder.Services.AddScoped<IDataPermissionService, DataPermissionService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 
 var app = builder.Build();
 

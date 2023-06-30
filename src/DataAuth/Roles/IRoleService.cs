@@ -8,6 +8,6 @@ namespace DataAuth.Roles
 {
     public interface IRoleService
     {
-        Task<RoleModel> AddRole(RoleModel model);
+        Task<RoleModel> AddRole(RoleModel model, CancellationToken cancellationToken = default);
     }
 }

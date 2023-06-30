@@ -10,7 +10,7 @@ namespace DataAuth.Entities
 {
     public class UserRole : BaseEntity<int>
     {
-        public UserRole(string userId, string roleId)
+        public UserRole(string userId, int roleId)
         {
             UserId = userId;
             RoleId = roleId;
@@ -18,6 +18,8 @@ namespace DataAuth.Entities
 
         public string UserId { get; set; }
 
-        public string RoleId { get; set; }
+        public int RoleId { get; set; }
+
+        public Role? Role { get; set; }
     }
 }

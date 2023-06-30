@@ -8,6 +8,6 @@ namespace DataAuth.AccessAttributes
 {
     public interface IAccessAttributeService
     {
-        Task<AccessAttributeModel> AddAccessAttribute(AccessAttributeModel model);
+        Task<AccessAttributeModel> AddAccessAttribute(AccessAttributeModel model, CancellationToken cancellationToken = default);
     }
 }

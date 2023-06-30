@@ -21,8 +21,8 @@ namespace DataAuth.AccessAttributeTables
         {
             var entity = new AccessAttributeTable(model.AccessAttributeId, model.TableName, model.Alias, model.IdColumn, model.NameColumn, model.IsSelfReference
                 , model.ParentColumn, model.HierarchyLevel, model.IsLeafLevel, model.LocalPermissionTableName, model.LocalPermissionIdColumn, model.LocalPermissionLookupColumn);
-            _dbContext.AccessAttributeTables.Add(entity);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.AccessAttributeTables.AddAsync(entity, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
             model.Id = entity.Id;
             return model;
         }

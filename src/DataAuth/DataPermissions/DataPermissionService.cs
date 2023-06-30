@@ -17,12 +17,12 @@ namespace DataAuth.DataPermissions
             _dbContext = dbContext;
         }
 
-        public async Task<DataPermissionModel> AddDataPermission(DataPermissionModel model)
+        public async Task<DataPermissionModel> AddDataPermission(DataPermissionModel model, CancellationToken cancellationToken = default)
         {
             // TODO: Validation
             var entity = new DataPermission(model.GrantType, model.SubjectId, model.AccessAttributeTableId, model.AccessLevel, model.GrantedDataValue);
-            _dbContext.DataPermissions.Add(entity);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.DataPermissions.AddAsync(entity, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
             model.Id = entity.Id;
             return model;
         }
