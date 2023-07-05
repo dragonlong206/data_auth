@@ -25,8 +25,11 @@ builder.Services.AddScoped<IAccessAttributeTableService, AccessAttributeTableSer
 builder.Services.AddScoped<IDataPermissionService, DataPermissionService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
+builder.Services.AddScoped<ICoreService, CoreService>();
 
 var app = builder.Build();
+
+EfExtensions.Initialize(app.Services);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
