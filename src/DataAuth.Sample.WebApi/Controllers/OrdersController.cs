@@ -21,7 +21,7 @@ namespace DataAuth.Sample.WebApi.Controllers
         [HttpGet]
         public async Task<IEnumerable<Order>> Get()
         {
-            var orders = await _dbContext.Orders.WithDataAuthAsync<Order, int>("1", "STORE", x => x.StoreId!.Value);
+            var orders = await _dbContext.Orders.WithDataAuthAsync<Order, int>("2", "STORE", x => x.StoreId.Value);
             return orders;
         }
 

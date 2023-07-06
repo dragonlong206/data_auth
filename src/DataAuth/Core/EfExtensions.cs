@@ -27,22 +27,45 @@ namespace DataAuth.Core
         {
             if (_serviceProvider == null)
             {
-                throw new Exception("Please add EfExtensions.Initialize to application initialization!");
+                throw new Exception("Please add EfExtensions.Initialize to application startup, after dependency injection!");
             }
 
             using var scope = _serviceProvider.CreateScope();
             var coreService = scope.ServiceProvider.GetRequiredService<ICoreService>();
 
             // Get granted data
-            var grantedData = await coreService.GetDataPermissions<TKey>(subjectId, accessAttributeCode, grantType, localLookupValue, cancellationToken);
+            var permissionResult = await coreService.GetDataPermissions<TKey>(subjectId, accessAttributeCode, grantType, localLookupValue, cancellationToken);
+            var grantedData = permissionResult.GrantedValues;
 
-            // Create lambda expression for query condition
-            var propertyInfo = filterProperty.GetPropertyAccess();
-            var expressionParam = Expression.Parameter(typeof(T), "x");
-            var method = grantedData.GetType().GetMethod("Contains");
-            var expressionCall = Expression.Call(Expression.Constant(grantedData), method!, Expression.Property(expressionParam, propertyInfo));
-            var lamda = Expression.Lambda<Func<T, bool>>(expressionCall, expressionParam);
-            return query.Where(lamda);
+            if (grantedData != null && grantedData.Any())
+            {
+                // Create lambda expression for query condition
+                var lambda = CreateContainsLambdaExpression(filterProperty, grantedData);
+                return query.Where(lambda);
+            }
+            // If don't have any permission then return empty query
+            return Enumerable.Empty<T>().AsQueryable();
+        }
+
+        static Expression<Func<T, bool>> CreateContainsLambdaExpression<T, TKey>(Expression<Func<T, TKey>> filterProperty, IEnumerable<TKey> grantedData)
+        {
+            var methods = typeof(Enumerable).GetMethods().Where(x => x.Name == nameof(Enumerable.Contains)).ToList();
+            // Get Contains method having 2 parameters
+            // public static bool Contains<TSource>(this IEnumerable<TSource> source, TSource value)
+            var method = methods.First(m =>
+            {
+                if (!m.IsGenericMethod || m.GetParameters().Length != 2)
+                {
+                    return false;
+                }
+                return true;
+            });
+            var genericMethod = method.MakeGenericMethod(new Type[] { typeof(TKey) });
+            var memberExpression = (MemberExpression)filterProperty.Body;
+            var expressionCall = Expression.Call(null, genericMethod!, Expression.Constant(grantedData), memberExpression);
+            var expressionParam = filterProperty.Parameters[0];
+            var lambda = Expression.Lambda<Func<T, bool>>(expressionCall, expressionParam);
+            return lambda;
         }
     }
 }
