@@ -45,7 +45,7 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("DataAuth_AccessAttributes");
+                    b.ToTable("AccessAttributes", "DataAuth");
                 });
 
             modelBuilder.Entity("DataAuth.Entities.AccessAttributeTable", b =>
@@ -103,7 +103,7 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
                     b.HasIndex("Alias")
                         .IsUnique();
 
-                    b.ToTable("DataAuth_AccessAttributeTables");
+                    b.ToTable("AccessAttributeTables", "DataAuth");
                 });
 
             modelBuilder.Entity("DataAuth.Entities.DataPermission", b =>
@@ -134,7 +134,7 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
 
                     b.HasIndex("AccessAttributeTableId");
 
-                    b.ToTable("DataAuth_DataPermissions");
+                    b.ToTable("DataPermissions", "DataAuth");
                 });
 
             modelBuilder.Entity("DataAuth.Entities.Role", b =>
@@ -161,7 +161,7 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("DataAuth_Roles");
+                    b.ToTable("Roles", "DataAuth");
                 });
 
             modelBuilder.Entity("DataAuth.Entities.UserRole", b =>
@@ -186,7 +186,7 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
                     b.HasIndex("UserId", "RoleId")
                         .IsUnique();
 
-                    b.ToTable("DataAuth_UserRoles");
+                    b.ToTable("UserRoles", "DataAuth");
                 });
 
             modelBuilder.Entity("DataAuth.Entities.AccessAttributeTable", b =>

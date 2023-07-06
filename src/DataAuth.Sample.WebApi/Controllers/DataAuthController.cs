@@ -27,5 +27,12 @@ namespace DataAuth.Sample.WebApi.Controllers
         {
             return await _coreService.GetDataPermissions<Guid>(subjectId, "ORDER_TYPE", grantType, localLookupValue);
         }
+
+        [Route("InitSamplePermissions")]
+        [HttpPost]
+        public async Task InitSamplePermissions()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

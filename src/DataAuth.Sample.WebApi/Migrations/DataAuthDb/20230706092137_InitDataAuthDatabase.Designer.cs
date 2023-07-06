@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
 {
     [DbContext(typeof(DataAuthDbContext))]
-    [Migration("20230630103538_AddUserRoleTables")]
-    partial class AddUserRoleTables
+    [Migration("20230706092137_InitDataAuthDatabase")]
+    partial class InitDataAuthDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,7 +48,7 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("DataAuth_AccessAttributes");
+                    b.ToTable("AccessAttributes", "DataAuth");
                 });
 
             modelBuilder.Entity("DataAuth.Entities.AccessAttributeTable", b =>
@@ -106,7 +106,7 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
                     b.HasIndex("Alias")
                         .IsUnique();
 
-                    b.ToTable("DataAuth_AccessAttributeTables");
+                    b.ToTable("AccessAttributeTables", "DataAuth");
                 });
 
             modelBuilder.Entity("DataAuth.Entities.DataPermission", b =>
@@ -137,7 +137,7 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
 
                     b.HasIndex("AccessAttributeTableId");
 
-                    b.ToTable("DataAuth_DataPermissions");
+                    b.ToTable("DataPermissions", "DataAuth");
                 });
 
             modelBuilder.Entity("DataAuth.Entities.Role", b =>
@@ -164,7 +164,7 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("DataAuth_Roles");
+                    b.ToTable("Roles", "DataAuth");
                 });
 
             modelBuilder.Entity("DataAuth.Entities.UserRole", b =>
@@ -175,11 +175,7 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("RoleId1")
+                    b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -188,12 +184,12 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId1");
+                    b.HasIndex("RoleId");
 
                     b.HasIndex("UserId", "RoleId")
                         .IsUnique();
 
-                    b.ToTable("DataAuth_UserRoles");
+                    b.ToTable("UserRoles", "DataAuth");
                 });
 
             modelBuilder.Entity("DataAuth.Entities.AccessAttributeTable", b =>
@@ -222,7 +218,9 @@ namespace DataAuth.Sample.WebApi.Migrations.DataAuthDb
                 {
                     b.HasOne("DataAuth.Entities.Role", "Role")
                         .WithMany()
-                        .HasForeignKey("RoleId1");
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Role");
                 });

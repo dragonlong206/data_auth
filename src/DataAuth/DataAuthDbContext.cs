@@ -13,7 +13,7 @@ namespace DataAuth
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                entityType.SetTableName("DataAuth_" + entityType.GetTableName());
+                entityType.SetSchema("DataAuth");
             }
 
             modelBuilder.Entity<AccessAttribute>()

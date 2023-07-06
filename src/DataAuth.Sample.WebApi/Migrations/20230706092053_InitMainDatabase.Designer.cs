@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAuth.Sample.WebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230706084832_AddOrderTypesTables")]
-    partial class AddOrderTypesTables
+    [Migration("20230706092053_InitMainDatabase")]
+    partial class InitMainDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
