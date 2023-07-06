@@ -64,7 +64,7 @@ namespace DataAuth.Core
                     .Include(x => x.AccessAttributeTable)
                     .ThenInclude(a => a!.AccessAttribute)
                     .Where(x => roleIdsOfUser.Contains(x.SubjectId)
-                        && (x.GrantType == GrantType.ForRole || x.GrantType == GrantType.ForDataAuthRole)
+                        && (x.GrantType == GrantType.ForRole)
                         && x.AccessAttributeTable!.AccessAttribute!.Code == accessAttributeCode)
                     .ToListAsync(cancellationToken);
                 return rolePermissions;

@@ -20,5 +20,12 @@ namespace DataAuth.Sample.WebApi.Controllers
         {
             return await _coreService.GetDataPermissions<int>(subjectId, accessAttributeCode, grantType, localLookupValue);
         }
+
+        [Route("OrderTypes")]
+        [HttpGet]
+        public async Task<DataPermissionResult<Guid>> GetGrantedOrderType(string subjectId, GrantType grantType = GrantType.ForUser, string? localLookupValue = null)
+        {
+            return await _coreService.GetDataPermissions<Guid>(subjectId, "ORDER_TYPE", grantType, localLookupValue);
+        }
     }
 }

@@ -8,6 +8,16 @@ namespace DataAuth.Base
 {
     public class BaseEntity<TKey>
     {
+        public BaseEntity() 
+        {
+            Id = default;
+        }
+
+        public BaseEntity(TKey id)
+        {
+            Id = id;
+        }
+
         public TKey Id { get; set; }
     }
 }
