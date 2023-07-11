@@ -1,12 +1,12 @@
-﻿using Domain.Base;
-using Domain.Enums;
+﻿using DataAuth.Base;
+using DataAuth.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace DataAuth.Entities
 {
     public class DataPermission : BaseEntity<int>
     {
@@ -18,6 +18,12 @@ namespace Domain.Entities
             AccessLevel = accessLevel;
         }
 
+        public DataPermission(GrantType grantType, string subjectId, int accessAttributeTableId, AccessLevel accessLevel, string? grantedDataValue)
+            : this(grantType, subjectId, accessAttributeTableId, accessLevel)
+        {
+            GrantedDataValue = grantedDataValue;
+        }
+
         public GrantType GrantType { get; set; }
 
         /// <summary>
@@ -26,6 +32,8 @@ namespace Domain.Entities
         public string SubjectId { get; set; }
 
         public int AccessAttributeTableId { get; set; }
+
+        public AccessAttributeTable? AccessAttributeTable { get; set; }
 
         public AccessLevel AccessLevel { get; set; }
 

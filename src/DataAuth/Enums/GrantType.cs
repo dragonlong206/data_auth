@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Base
+namespace DataAuth.Enums
 {
-    public class BaseEntity<TKey>
+    public enum GrantType
     {
-        public TKey Id { get; set; }
+        ForUser = 0,
+
+        ForRole = 1
     }
 }
