@@ -7,6 +7,7 @@ namespace DataAuth.Core
         public DataPermissionResult()
         {
             PermissionDetails = new List<DataPermissionResultDetail<TKey>>();
+            GrantedValues = new List<TKey>();
         }
 
         /// <summary>

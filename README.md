@@ -10,13 +10,14 @@ This project aims to create a mechanism for data authorization.
    ```csharp
    builder.Services.AddDbContext<DataAuthDbContext>(options => options.UseSqlServer("name=ConnectionStrings:YourConnectionStringName",
    b => b.MigrationsAssembly("YourAssemblyName")));
+   builder.Services.AddSingleton<IMemoryCache, MemoryCache>();
+   builder.Services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
    builder.Services.AddScoped<ICoreService, CoreService>();
    builder.Services.AddScoped<IAccessAttributeService, AccessAttributeService>();
    builder.Services.AddScoped<IAccessAttributeTableService, AccessAttributeTableService>();
    builder.Services.AddScoped<IDataPermissionService, DataPermissionService>();
    builder.Services.AddScoped<IRoleService, RoleService>();
    builder.Services.AddScoped<IUserRoleService, UserRoleService>();
-   builder.Services.AddScoped<ICoreService, CoreService>();
    ```
 3. Also in your main application Program.cs, below `var app = builder.Build();`, add the following line:
    ```csharp

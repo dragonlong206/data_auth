@@ -1,12 +1,14 @@
 using DataAuth;
 using DataAuth.AccessAttributes;
 using DataAuth.AccessAttributeTables;
+using DataAuth.Cache;
 using DataAuth.Core;
 using DataAuth.DataPermissions;
 using DataAuth.Roles;
 using DataAuth.Sample.WebApi;
 using DataAuth.UserRoles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,13 +21,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer("name=ConnectionStrings:ApplicationDbContext"));
 builder.Services.AddDbContext<DataAuthDbContext>(options => options.UseSqlServer("name=ConnectionStrings:ApplicationDbContext",
     b => b.MigrationsAssembly("DataAuth.Sample.WebApi")));
+builder.Services.AddSingleton<IMemoryCache, MemoryCache>();
+builder.Services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
 builder.Services.AddScoped<ICoreService, CoreService>();
 builder.Services.AddScoped<IAccessAttributeService, AccessAttributeService>();
 builder.Services.AddScoped<IAccessAttributeTableService, AccessAttributeTableService>();
 builder.Services.AddScoped<IDataPermissionService, DataPermissionService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
-builder.Services.AddScoped<ICoreService, CoreService>();
 
 var app = builder.Build();
 
