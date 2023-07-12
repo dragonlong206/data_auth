@@ -28,11 +28,20 @@ namespace DataAuth.Core
                 return dataFromCache;
             }
 
+            await GetDataPermissionFromDatabase(subjectId, accessAttributeCode, grantType, result, cancellationToken);
+
+            _cacheProvider.Set(cacheKey, result);
+
+            return result;
+        }
+
+        private async Task GetDataPermissionFromDatabase<TKey>(string subjectId, string accessAttributeCode, GrantType grantType, DataPermissionResult<TKey> result, CancellationToken cancellationToken) where TKey : struct
+        {
             var dataPermissions = await _dbContext.DataPermissions.AsNoTracking()
-                .Include(x => x.AccessAttributeTable)
-                .ThenInclude(a => a!.AccessAttribute)
-                .Where(x => x.SubjectId == subjectId && x.GrantType == grantType && x.AccessAttributeTable!.AccessAttribute!.Code == accessAttributeCode)
-                .ToListAsync(cancellationToken);
+                            .Include(x => x.AccessAttributeTable)
+                            .ThenInclude(a => a!.AccessAttribute)
+                            .Where(x => x.SubjectId == subjectId && x.GrantType == grantType && x.AccessAttributeTable!.AccessAttribute!.Code == accessAttributeCode)
+                            .ToListAsync(cancellationToken);
 
             // If subject is user then get all roles of the user and then get all permissions of those roles.
             if (grantType == GrantType.ForUser)
@@ -58,10 +67,6 @@ namespace DataAuth.Core
                 }
                 result.GrantedValues = allGrantedData.Distinct().ToArray();
             }
-
-            _cacheProvider.Set(cacheKey, result);
-
-            return result;
         }
 
         private async Task<List<DataPermission>> GetPermissionsByRolesOfUser(string userId, string accessAttributeCode, CancellationToken cancellationToken)

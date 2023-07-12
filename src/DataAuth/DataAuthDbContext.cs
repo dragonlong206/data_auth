@@ -36,14 +36,14 @@ namespace DataAuth
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<AccessAttribute> AccessAttributes { get; set; }
+        public virtual DbSet<AccessAttribute> AccessAttributes { get; set; }
 
-        public DbSet<AccessAttributeTable> AccessAttributeTables { get; set; }
+        public virtual DbSet<AccessAttributeTable> AccessAttributeTables { get; set; }
 
-        public DbSet<DataPermission> DataPermissions { get; set; }
+        public virtual DbSet<DataPermission> DataPermissions { get; set; }
 
-        public DbSet<Role> Roles { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
 
-        public DbSet<UserRole> UserRoles { get; set; }
+        public virtual DbSet<UserRole> UserRoles { get; set; }
     }
 }

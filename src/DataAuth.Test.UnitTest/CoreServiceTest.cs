@@ -10,6 +10,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace DataAuth.Test.UnitTest
@@ -53,7 +55,7 @@ namespace DataAuth.Test.UnitTest
 
         [TestCategory("GetDataPermissions")]
         [TestMethod]
-        public async Task CallingServiceAndSetToCacheWhenCacheEmpty()
+        public async Task GettingDataAndSetToCacheWhenCacheEmpty()
         {
             var subjectId = Guid.NewGuid().ToString();
             var accessAttributeCode = "TEST";
@@ -63,15 +65,30 @@ namespace DataAuth.Test.UnitTest
             var cacheProviderMock = new Mock<ICacheProvider>();
             cacheProviderMock.Setup(x => x.Get<DataPermissionResult<int>>(cacheKey)).Returns((DataPermissionResult<int>)null);
 
-            var coreServiceMock = new Mock<ICoreService>();
-            var mockResult = new DataPermissionResult<int>();
-            coreServiceMock.Setup(c => c.GetDataPermissions<int>(subjectId, accessAttributeCode, grantType, null, default)).Returns(Task.FromResult(mockResult));
-            var coreService = coreServiceMock.Object;
-            await coreService.GetDataPermissions<int>(subjectId, accessAttributeCode, grantType);
+            var coreService = new CoreService(_dbContext, cacheProviderMock.Object);
+            var permissions = await coreService.GetDataPermissions<int>(subjectId, accessAttributeCode, grantType);
 
             cacheProviderMock.Verify(c => c.Get<DataPermissionResult<int>>(cacheKey), Times.Once);
-            coreServiceMock.Verify(c => c.GetDataPermissions<int>(subjectId, accessAttributeCode, grantType, null, default), Times.Once);
-            cacheProviderMock.Verify(c => c.Set(cacheKey, mockResult, 24), Times.Once);
+            cacheProviderMock.Verify(c => c.Set(cacheKey, permissions, 24), Times.Once);
+        }
+
+        [TestCategory("GetDataPermissions")]
+        [TestMethod]
+        public async Task NotSetDataToCacheWhenCacheHaveValue()
+        {
+            var subjectId = Guid.NewGuid().ToString();
+            var accessAttributeCode = "TEST";
+            var grantType = GrantType.ForUser;
+            var cacheKey = CacheHelper.GetCacheKey(subjectId, accessAttributeCode, grantType);
+
+            var cacheProviderMock = new Mock<ICacheProvider>();
+            cacheProviderMock.Setup(x => x.Get<DataPermissionResult<int>>(cacheKey)).Returns(new DataPermissionResult<int>());
+
+            var coreService = new CoreService(_dbContext, cacheProviderMock.Object);
+            var permissions = await coreService.GetDataPermissions<int>(subjectId, accessAttributeCode, grantType);
+
+            cacheProviderMock.Verify(c => c.Get<DataPermissionResult<int>>(cacheKey), Times.Once);
+            cacheProviderMock.Verify(c => c.Set(cacheKey, permissions, 24), Times.Never);
         }
 
         [TestCategory("GenerateQuery")]
