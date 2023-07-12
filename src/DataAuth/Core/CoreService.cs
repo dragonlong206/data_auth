@@ -1,4 +1,5 @@
-﻿using DataAuth.Entities;
+﻿using DataAuth.Cache;
+using DataAuth.Entities;
 using DataAuth.Enums;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -9,15 +10,24 @@ namespace DataAuth.Core
     public class CoreService : ICoreService
     {
         DataAuthDbContext _dbContext;
+        ICacheProvider _cacheProvider;
 
-        public CoreService(DataAuthDbContext dbContext)
+        public CoreService(DataAuthDbContext dbContext, ICacheProvider cacheProvider)
         {
             _dbContext = dbContext;
+            _cacheProvider = cacheProvider;
         }
 
         public async Task<DataPermissionResult<TKey>> GetDataPermissions<TKey>(string subjectId, string accessAttributeCode, GrantType grantType = GrantType.ForUser, string? localLookupValue = null, CancellationToken cancellationToken = default) where TKey : struct
         {
             var result = new DataPermissionResult<TKey>();
+            var cacheKey = CacheHelper.GetCacheKey(subjectId, accessAttributeCode, grantType);
+            var dataFromCache = _cacheProvider.Get<DataPermissionResult<TKey>>(cacheKey);
+            if (dataFromCache != null)
+            {
+                return dataFromCache;
+            }
+
             var dataPermissions = await _dbContext.DataPermissions.AsNoTracking()
                 .Include(x => x.AccessAttributeTable)
                 .ThenInclude(a => a!.AccessAttribute)
@@ -48,6 +58,8 @@ namespace DataAuth.Core
                 }
                 result.GrantedValues = allGrantedData.Distinct().ToArray();
             }
+
+            _cacheProvider.Set(cacheKey, result);
 
             return result;
         }

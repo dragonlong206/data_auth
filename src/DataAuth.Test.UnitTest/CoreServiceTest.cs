@@ -1,9 +1,14 @@
 using DataAuth.AccessAttributes;
 using DataAuth.AccessAttributeTables;
+using DataAuth.Cache;
 using DataAuth.Core;
 using DataAuth.Entities;
+using DataAuth.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,6 +19,7 @@ namespace DataAuth.Test.UnitTest
     {
         DataAuthDbContext _dbContext;
         ICoreService _coreService;
+        ICacheProvider _cacheProvider;
 
         public CoreServiceTest()
         {
@@ -21,7 +27,51 @@ namespace DataAuth.Test.UnitTest
                 .UseInMemoryDatabase(databaseName: "DataAuthTest")
                 .Options;
             _dbContext = new DataAuthDbContext(options);
-            _coreService = new CoreService(_dbContext);
+            _cacheProvider = new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions
+            {
+                SizeLimit = 1024
+            }));
+            _coreService = new CoreService(_dbContext, _cacheProvider);
+        }
+
+        [TestCategory("GetDataPermissions")]
+        [TestMethod]
+        public async Task UsingCacheProvider()
+        {
+            var subjectId = Guid.NewGuid().ToString();
+            var accessAttributeCode = "TEST";
+            var grantType = GrantType.ForUser;
+            var cacheKey = CacheHelper.GetCacheKey(subjectId, accessAttributeCode, grantType);
+
+            var mock = new Mock<ICacheProvider>();
+
+            var coreService = new CoreService(_dbContext, mock.Object);
+            await coreService.GetDataPermissions<int>(subjectId, accessAttributeCode, grantType);
+
+            mock.Verify(c => c.Get<DataPermissionResult<int>>(cacheKey), Times.Once);
+        }
+
+        [TestCategory("GetDataPermissions")]
+        [TestMethod]
+        public async Task CallingServiceAndSetToCacheWhenCacheEmpty()
+        {
+            var subjectId = Guid.NewGuid().ToString();
+            var accessAttributeCode = "TEST";
+            var grantType = GrantType.ForUser;
+            var cacheKey = CacheHelper.GetCacheKey(subjectId, accessAttributeCode, grantType);
+
+            var cacheProviderMock = new Mock<ICacheProvider>();
+            cacheProviderMock.Setup(x => x.Get<DataPermissionResult<int>>(cacheKey)).Returns((DataPermissionResult<int>)null);
+
+            var coreServiceMock = new Mock<ICoreService>();
+            var mockResult = new DataPermissionResult<int>();
+            coreServiceMock.Setup(c => c.GetDataPermissions<int>(subjectId, accessAttributeCode, grantType, null, default)).Returns(Task.FromResult(mockResult));
+            var coreService = coreServiceMock.Object;
+            await coreService.GetDataPermissions<int>(subjectId, accessAttributeCode, grantType);
+
+            cacheProviderMock.Verify(c => c.Get<DataPermissionResult<int>>(cacheKey), Times.Once);
+            coreServiceMock.Verify(c => c.GetDataPermissions<int>(subjectId, accessAttributeCode, grantType, null, default), Times.Once);
+            cacheProviderMock.Verify(c => c.Set(cacheKey, mockResult, 24), Times.Once);
         }
 
         [TestCategory("GenerateQuery")]
