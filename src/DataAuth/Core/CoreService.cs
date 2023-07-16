@@ -1,4 +1,5 @@
-﻿using DataAuth.Cache;
+﻿using DataAuth.AccessAttributes;
+using DataAuth.Cache;
 using DataAuth.Entities;
 using DataAuth.Enums;
 using Microsoft.Data.SqlClient;
@@ -18,10 +19,15 @@ namespace DataAuth.Core
             _cacheProvider = cacheProvider;
         }
 
+        public static string GetCacheKey(string subjectId, string accessAttributeCode, GrantType grantType)
+        {
+            return string.Join("_", subjectId, accessAttributeCode, grantType);
+        }
+
         public async Task<DataPermissionResult<TKey>> GetDataPermissions<TKey>(string subjectId, string accessAttributeCode, GrantType grantType = GrantType.ForUser, string? localLookupValue = null, CancellationToken cancellationToken = default) where TKey : struct
         {
             var result = new DataPermissionResult<TKey>();
-            var cacheKey = CacheHelper.GetCacheKey(subjectId, accessAttributeCode, grantType);
+            var cacheKey = GetCacheKey(subjectId, accessAttributeCode, grantType);
             var dataFromCache = _cacheProvider.Get<DataPermissionResult<TKey>>(cacheKey);
             if (dataFromCache != null)
             {

@@ -43,7 +43,7 @@ namespace DataAuth.Test.UnitTest
             var subjectId = Guid.NewGuid().ToString();
             var accessAttributeCode = "TEST";
             var grantType = GrantType.ForUser;
-            var cacheKey = CacheHelper.GetCacheKey(subjectId, accessAttributeCode, grantType);
+            var cacheKey = CoreService.GetCacheKey(subjectId, accessAttributeCode, grantType);
 
             var mock = new Mock<ICacheProvider>();
 
@@ -60,7 +60,7 @@ namespace DataAuth.Test.UnitTest
             var subjectId = Guid.NewGuid().ToString();
             var accessAttributeCode = "TEST";
             var grantType = GrantType.ForUser;
-            var cacheKey = CacheHelper.GetCacheKey(subjectId, accessAttributeCode, grantType);
+            var cacheKey = CoreService.GetCacheKey(subjectId, accessAttributeCode, grantType);
 
             var cacheProviderMock = new Mock<ICacheProvider>();
             cacheProviderMock.Setup(x => x.Get<DataPermissionResult<int>>(cacheKey)).Returns((DataPermissionResult<int>)null);
@@ -79,7 +79,7 @@ namespace DataAuth.Test.UnitTest
             var subjectId = Guid.NewGuid().ToString();
             var accessAttributeCode = "TEST";
             var grantType = GrantType.ForUser;
-            var cacheKey = CacheHelper.GetCacheKey(subjectId, accessAttributeCode, grantType);
+            var cacheKey = CoreService.GetCacheKey(subjectId, accessAttributeCode, grantType);
 
             var cacheProviderMock = new Mock<ICacheProvider>();
             cacheProviderMock.Setup(x => x.Get<DataPermissionResult<int>>(cacheKey)).Returns(new DataPermissionResult<int>());
