@@ -24,5 +24,10 @@ namespace DataAuth.Cache
         {
             return _cacheInstance.Get<T>(key);
         }
+
+        public void Invalidate(string key)
+        {
+            _cacheInstance.Remove(key);
+        }
     }
 }

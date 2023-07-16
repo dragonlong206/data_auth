@@ -10,5 +10,7 @@ namespace DataAuth.Cache
     {
         void Set(string key, object value, double expirationInHours = 24);
         T? Get<T>(string key);
+
+        void Invalidate(string key);
     }
 }
