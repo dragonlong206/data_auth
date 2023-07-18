@@ -16,7 +16,10 @@ namespace DataAuth.Roles
             _dbContext = dbContext;
         }
 
-        public async Task<RoleModel> AddRole(RoleModel model, CancellationToken cancellationToken = default)
+        public async Task<RoleModel> AddRole(
+            RoleModel model,
+            CancellationToken cancellationToken = default
+        )
         {
             var entity = new Role(model.Name, model.Code);
 

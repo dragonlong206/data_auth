@@ -9,6 +9,7 @@ namespace DataAuth.Sample.WebApi.Controllers
     public class UsersController : ControllerBase
     {
         IUserRoleService _userRoleService;
+
         public UsersController(IUserRoleService userRoleService)
         {
             _userRoleService = userRoleService;

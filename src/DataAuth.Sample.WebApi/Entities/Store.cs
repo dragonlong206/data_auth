@@ -4,7 +4,7 @@ namespace DataAuth.Sample.WebApi.Entities
 {
     public class Store : BaseEntity<int>
     {
-        public Store(string name, string code, int provinceId) 
+        public Store(string name, string code, int provinceId)
         {
             Name = name;
             Code = code;

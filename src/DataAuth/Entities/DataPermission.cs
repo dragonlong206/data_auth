@@ -10,7 +10,12 @@ namespace DataAuth.Entities
 {
     public class DataPermission : BaseEntity<int>
     {
-        public DataPermission(GrantType grantType, string subjectId, int accessAttributeTableId, AccessLevel accessLevel)
+        public DataPermission(
+            GrantType grantType,
+            string subjectId,
+            int accessAttributeTableId,
+            AccessLevel accessLevel
+        )
         {
             GrantType = grantType;
             SubjectId = subjectId;
@@ -18,7 +23,13 @@ namespace DataAuth.Entities
             AccessLevel = accessLevel;
         }
 
-        public DataPermission(GrantType grantType, string subjectId, int accessAttributeTableId, AccessLevel accessLevel, string? grantedDataValue)
+        public DataPermission(
+            GrantType grantType,
+            string subjectId,
+            int accessAttributeTableId,
+            AccessLevel accessLevel,
+            string? grantedDataValue
+        )
             : this(grantType, subjectId, accessAttributeTableId, accessLevel)
         {
             GrantedDataValue = grantedDataValue;

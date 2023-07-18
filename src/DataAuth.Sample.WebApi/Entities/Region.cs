@@ -8,7 +8,6 @@ namespace DataAuth.Sample.WebApi.Entities
         {
             Name = name;
             Code = code;
-
         }
 
         public string Name { get; set; }

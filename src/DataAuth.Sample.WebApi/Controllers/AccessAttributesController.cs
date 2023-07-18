@@ -10,11 +10,11 @@ namespace DataAuth.Sample.WebApi.Controllers
     public class AccessAttributesController : ControllerBase
     {
         IAccessAttributeService _accessAttributeService;
+
         public AccessAttributesController(IAccessAttributeService accessAttributeService)
         {
             _accessAttributeService = accessAttributeService;
         }
-    
 
         // GET: api/<AccessAttributesController>
         [HttpGet]
@@ -39,14 +39,10 @@ namespace DataAuth.Sample.WebApi.Controllers
 
         // PUT api/<AccessAttributesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+        public void Put(int id, [FromBody] string value) { }
 
         // DELETE api/<AccessAttributesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        public void Delete(int id) { }
     }
 }

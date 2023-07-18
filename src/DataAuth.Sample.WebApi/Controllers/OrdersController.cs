@@ -21,7 +21,11 @@ namespace DataAuth.Sample.WebApi.Controllers
         [HttpGet]
         public async Task<IEnumerable<Order>> Get()
         {
-            var orders = await _dbContext.Orders.WithDataAuthAsync<Order, int>("2", "STORE", x => x.StoreId.Value);
+            var orders = await _dbContext.Orders.WithDataAuthAsync<Order, int>(
+                "2",
+                "STORE",
+                x => x.StoreId.Value
+            );
             return orders;
         }
 
@@ -34,20 +38,14 @@ namespace DataAuth.Sample.WebApi.Controllers
 
         // POST api/<OrdersController>
         [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
+        public void Post([FromBody] string value) { }
 
         // PUT api/<OrdersController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+        public void Put(int id, [FromBody] string value) { }
 
         // DELETE api/<OrdersController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        public void Delete(int id) { }
     }
 }

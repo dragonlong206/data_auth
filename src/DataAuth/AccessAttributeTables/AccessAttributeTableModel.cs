@@ -4,8 +4,20 @@ namespace DataAuth.AccessAttributeTables
 {
     public class AccessAttributeTableModel : BaseModel<int>
     {
-        public AccessAttributeTableModel(int accessAttributeId, string tableName, string alias, string idColumn, string nameColumn, bool isSelfReference
-           , string? parentColumn, int? hierarchyLevel, bool isLeafLevel, string? localPermissionTableName, string? localPermissionIdColumn, string? localPermissionLookupColumn)
+        public AccessAttributeTableModel(
+            int accessAttributeId,
+            string tableName,
+            string alias,
+            string idColumn,
+            string nameColumn,
+            bool isSelfReference,
+            string? parentColumn,
+            int? hierarchyLevel,
+            bool isLeafLevel,
+            string? localPermissionTableName,
+            string? localPermissionIdColumn,
+            string? localPermissionLookupColumn
+        )
         {
             AccessAttributeId = accessAttributeId;
             TableName = tableName;

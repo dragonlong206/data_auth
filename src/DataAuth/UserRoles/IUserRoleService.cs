@@ -8,6 +8,9 @@ namespace DataAuth.UserRoles
 {
     public interface IUserRoleService
     {
-        Task<UserRoleModel> AddUserRole(UserRoleModel model, CancellationToken cancellationToken = default);
+        Task<UserRoleModel> AddUserRole(
+            UserRoleModel model,
+            CancellationToken cancellationToken = default
+        );
     }
 }
