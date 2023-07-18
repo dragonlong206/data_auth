@@ -106,6 +106,71 @@ namespace DataAuth.DataPermissions
             await InvalidateCache(entity, cancellationToken);
         }
 
+        // Get DataPermission list by GrantType, SubjectId, AccessAttributeTableId, convert to DataPermissionModel
+        public async Task<IEnumerable<DataPermissionModel>> GetDataPermissions(
+            GrantType? grantType = null,
+            string? subjectId = null,
+            int? accessAttributeTableId = null,
+            CancellationToken cancellationToken = default
+        )
+        {
+            IQueryable<DataPermission> query = _dbContext.DataPermissions.OrderByDescending(
+                x => x.Id
+            );
+
+            if (grantType != null)
+            {
+                query = query.Where(x => x.GrantType == grantType);
+            }
+            if (subjectId != null)
+            {
+                query = query.Where(x => x.SubjectId == subjectId);
+            }
+            if (accessAttributeTableId != null)
+            {
+                query = query.Where(x => x.AccessAttributeTableId == accessAttributeTableId);
+            }
+
+            return query.Select(
+                x =>
+                    new DataPermissionModel
+                    {
+                        Id = x.Id,
+                        GrantType = x.GrantType,
+                        SubjectId = x.SubjectId,
+                        AccessAttributeTableId = x.AccessAttributeTableId,
+                        AccessLevel = x.AccessLevel,
+                        GrantedDataValue = x.GrantedDataValue
+                    }
+            );
+        }
+
+        // Get DataPermission by Id, convert to DataPermissionModel
+        public async Task<DataPermissionModel?> GetDataPermissionById(
+            int id,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var entity = await _dbContext.DataPermissions
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (entity == null)
+            {
+                return null;
+            }
+
+            return new DataPermissionModel
+            {
+                Id = entity.Id,
+                GrantType = entity.GrantType,
+                SubjectId = entity.SubjectId,
+                AccessAttributeTableId = entity.AccessAttributeTableId,
+                AccessLevel = entity.AccessLevel,
+                GrantedDataValue = entity.GrantedDataValue
+            };
+        }
+
         private static void ValidateModel(DataPermissionModel model)
         {
             // Validate model, requires GrantType, SubjectId, AccessAttributeTableId, AccessLevel

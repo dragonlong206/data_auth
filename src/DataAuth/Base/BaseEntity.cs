@@ -8,7 +8,7 @@ namespace DataAuth.Base
 {
     public class BaseEntity<TKey>
     {
-        public BaseEntity() 
+        public BaseEntity()
         {
             Id = default;
         }

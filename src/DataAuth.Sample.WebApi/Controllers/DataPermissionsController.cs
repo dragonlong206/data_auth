@@ -17,20 +17,18 @@ namespace DataAuth.Sample.WebApi.Controllers
             _dataPermissionService = dataAuthService;
         }
 
-
-
         // GET: api/<DataPermissionsController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<DataPermissionModel>> Get()
         {
-            return new string[] { "value1", "value2" };
+            return await _dataPermissionService.GetDataPermissions();
         }
 
         // GET api/<DataPermissionsController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<DataPermissionModel?> Get(int id)
         {
-            return "value";
+            return await _dataPermissionService.GetDataPermissionById(id);
         }
 
         // POST api/<DataPermissionsController>
@@ -42,14 +40,16 @@ namespace DataAuth.Sample.WebApi.Controllers
 
         // PUT api/<DataPermissionsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task Put(int id, [FromBody] DataPermissionModel model)
         {
+            await _dataPermissionService.UpdateDataPermission(model);
         }
 
         // DELETE api/<DataPermissionsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
+            await _dataPermissionService.DeleteDataPermission(id);
         }
     }
 }

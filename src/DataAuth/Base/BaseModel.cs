@@ -8,6 +8,16 @@ namespace DataAuth.Base
 {
     public class BaseModel<TKey>
     {
+        public BaseModel()
+        {
+            Id = default!;
+        }
+
+        public BaseModel(TKey id)
+        {
+            Id = id;
+        }
+
         public TKey Id { get; internal set; }
     }
 }
