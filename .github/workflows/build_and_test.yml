@@ -14,7 +14,7 @@ jobs:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: "6.0.20"
+          dotnet-version: "6.0.412"
 
       - name: Restore dependencies
         run: dotnet restore src
