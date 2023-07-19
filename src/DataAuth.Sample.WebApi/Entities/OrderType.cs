@@ -4,14 +4,16 @@ namespace DataAuth.Sample.WebApi.Entities
 {
     public class OrderType : BaseEntity<Guid>
     {
-        public OrderType(string name, string code, Guid orderTypeGroupId) : base(Guid.NewGuid())
+        public OrderType(string name, string code, Guid orderTypeGroupId)
+            : base(Guid.NewGuid())
         {
             Name = name;
             Code = code;
             OrderTypeGroupId = orderTypeGroupId;
         }
 
-        public OrderType(Guid id, string name, string code, Guid orderTypeGroupId) : base(id)
+        public OrderType(Guid id, string name, string code, Guid orderTypeGroupId)
+            : base(id)
         {
             Name = name;
             Code = code;

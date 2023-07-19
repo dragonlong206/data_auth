@@ -9,7 +9,13 @@ namespace DataAuth.AccessAttributeTables
 {
     public interface IAccessAttributeTableService
     {
-        Task<AccessAttributeTableModel> AddAccessAttributeTable(AccessAttributeTableModel model, CancellationToken cancellationToken = default);
-        Task<AccessAttributeTable?> GetAccessAttributeTable(int id, CancellationToken cancellationToken = default);
+        Task<AccessAttributeTableModel> AddAccessAttributeTable(
+            AccessAttributeTableModel model,
+            CancellationToken cancellationToken = default
+        );
+        Task<AccessAttributeTable?> GetAccessAttributeTable(
+            int id,
+            CancellationToken cancellationToken = default
+        );
     }
 }

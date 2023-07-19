@@ -15,12 +15,20 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer("name=ConnectionStrings:ApplicationDbContext"));
-builder.Services.AddDbContext<DataAuthDbContext>(options => options.UseSqlServer("name=ConnectionStrings:ApplicationDbContext",
-    b => b.MigrationsAssembly("DataAuth.Sample.WebApi")));
+builder.Services.AddDbContext<ApplicationDbContext>(
+    options => options.UseSqlServer("name=ConnectionStrings:ApplicationDbContext")
+);
+builder.Services.AddDbContext<DataAuthDbContext>(
+    options =>
+        options.UseSqlServer(
+            "name=ConnectionStrings:ApplicationDbContext",
+            b => b.MigrationsAssembly("DataAuth.Sample.WebApi")
+        )
+);
 builder.Services.AddSingleton<IMemoryCache, MemoryCache>();
 builder.Services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
 builder.Services.AddScoped<ICoreService, CoreService>();

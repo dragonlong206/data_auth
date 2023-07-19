@@ -17,19 +17,40 @@ namespace DataAuth.AccessAttributeTables
             _dbContext = dbContext;
         }
 
-        public async Task<AccessAttributeTableModel> AddAccessAttributeTable(AccessAttributeTableModel model, CancellationToken cancellationToken = default)
+        public async Task<AccessAttributeTableModel> AddAccessAttributeTable(
+            AccessAttributeTableModel model,
+            CancellationToken cancellationToken = default
+        )
         {
-            var entity = new AccessAttributeTable(model.AccessAttributeId, model.TableName, model.Alias, model.IdColumn, model.NameColumn, model.IsSelfReference
-                , model.ParentColumn, model.HierarchyLevel, model.IsLeafLevel, model.LocalPermissionTableName, model.LocalPermissionIdColumn, model.LocalPermissionLookupColumn);
+            var entity = new AccessAttributeTable(
+                model.AccessAttributeId,
+                model.TableName,
+                model.Alias,
+                model.IdColumn,
+                model.NameColumn,
+                model.IsSelfReference,
+                model.ParentColumn,
+                model.HierarchyLevel,
+                model.IsLeafLevel,
+                model.LocalPermissionTableName,
+                model.LocalPermissionIdColumn,
+                model.LocalPermissionLookupColumn
+            );
             await _dbContext.AccessAttributeTables.AddAsync(entity, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
             model.Id = entity.Id;
             return model;
         }
 
-        public async Task<AccessAttributeTable?> GetAccessAttributeTable(int id, CancellationToken cancellationToken = default)
+        public async Task<AccessAttributeTable?> GetAccessAttributeTable(
+            int id,
+            CancellationToken cancellationToken = default
+        )
         {
-            return await _dbContext.AccessAttributeTables.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            return await _dbContext.AccessAttributeTables.FirstOrDefaultAsync(
+                x => x.Id == id,
+                cancellationToken
+            );
         }
     }
 }

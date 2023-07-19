@@ -9,6 +9,11 @@ namespace DataAuth.AccessAttributes
 {
     public class AccessAttributeModel : BaseModel<int>
     {
+        public AccessAttributeModel(string code)
+        {
+            Code = code;
+        }
+
         public string Code { get; set; }
 
         public string? Name { get; set; }

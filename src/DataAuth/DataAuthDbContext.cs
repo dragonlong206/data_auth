@@ -5,9 +5,8 @@ namespace DataAuth
 {
     public class DataAuthDbContext : DbContext
     {
-        public DataAuthDbContext(DbContextOptions options) : base(options)
-        {
-        }
+        public DataAuthDbContext(DbContextOptions options)
+            : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -16,22 +15,14 @@ namespace DataAuth
                 entityType.SetSchema("DataAuth");
             }
 
-            modelBuilder.Entity<AccessAttribute>()
-                .HasIndex(a => a.Code)
-                .IsUnique();
+            modelBuilder.Entity<AccessAttribute>().HasIndex(a => a.Code).IsUnique();
 
             // Make alias to be unique to avoid alias duplication when building query
-            modelBuilder.Entity<AccessAttributeTable>()
-                .HasIndex(a => a.Alias)
-                .IsUnique();
+            modelBuilder.Entity<AccessAttributeTable>().HasIndex(a => a.Alias).IsUnique();
 
-            modelBuilder.Entity<Role>()
-                .HasIndex(a => a.Code)
-                .IsUnique();
+            modelBuilder.Entity<Role>().HasIndex(a => a.Code).IsUnique();
 
-            modelBuilder.Entity<UserRole>()
-                .HasIndex(x => new {x.UserId, x.RoleId})
-                .IsUnique();
+            modelBuilder.Entity<UserRole>().HasIndex(x => new { x.UserId, x.RoleId }).IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }

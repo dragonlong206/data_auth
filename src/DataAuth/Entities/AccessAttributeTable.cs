@@ -9,7 +9,13 @@ namespace DataAuth.Entities
 {
     public class AccessAttributeTable : BaseEntity<int>
     {
-        public AccessAttributeTable(int accessAttributeId, string tableName, string alias, string idColumn, string nameColumn)
+        public AccessAttributeTable(
+            int accessAttributeId,
+            string tableName,
+            string alias,
+            string idColumn,
+            string nameColumn
+        )
         {
             AccessAttributeId = accessAttributeId;
             TableName = tableName;
@@ -18,8 +24,20 @@ namespace DataAuth.Entities
             NameColumn = nameColumn;
         }
 
-        public AccessAttributeTable(int accessAttributeId, string tableName, string alias, string idColumn, string nameColumn, bool isSelfReference
-            , string? parentColumn, int? hierarchyLevel, bool isLeafLevel = false, string? localPermissionTableName = null, string? localPermissionIdColumn = null, string? localPermissionLookupColumn = null)
+        public AccessAttributeTable(
+            int accessAttributeId,
+            string tableName,
+            string alias,
+            string idColumn,
+            string nameColumn,
+            bool isSelfReference,
+            string? parentColumn,
+            int? hierarchyLevel,
+            bool isLeafLevel = false,
+            string? localPermissionTableName = null,
+            string? localPermissionIdColumn = null,
+            string? localPermissionLookupColumn = null
+        )
             : this(accessAttributeId, tableName, alias, idColumn, nameColumn)
         {
             IsSelfReference = isSelfReference;
@@ -68,6 +86,5 @@ namespace DataAuth.Entities
         public string? LocalPermissionIdColumn { get; set; }
 
         public string? LocalPermissionLookupColumn { get; set; }
-
     }
 }

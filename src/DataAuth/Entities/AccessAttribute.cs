@@ -14,7 +14,8 @@ namespace DataAuth.Entities
             Code = code;
         }
 
-        public AccessAttribute(string code, string? name, string? description) : this(code)
+        public AccessAttribute(string code, string? name, string? description)
+            : this(code)
         {
             Name = name;
             Description = description;

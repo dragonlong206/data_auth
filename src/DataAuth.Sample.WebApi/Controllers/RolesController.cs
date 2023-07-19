@@ -10,11 +10,11 @@ namespace DataAuth.Sample.WebApi.Controllers
     public class RolesController : ControllerBase
     {
         IRoleService _roleService;
+
         public RolesController(IRoleService roleService)
         {
             _roleService = roleService;
         }
-
 
         // GET: api/<RolesController>
         [HttpGet]
@@ -39,14 +39,10 @@ namespace DataAuth.Sample.WebApi.Controllers
 
         // PUT api/<RolesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+        public void Put(int id, [FromBody] string value) { }
 
         // DELETE api/<RolesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        public void Delete(int id) { }
     }
 }

@@ -10,6 +10,7 @@ namespace DataAuth.Cache
     public class MemoryCacheProvider : ICacheProvider
     {
         IMemoryCache _cacheInstance;
+
         public MemoryCacheProvider(IMemoryCache cacheInstance)
         {
             _cacheInstance = cacheInstance;

@@ -10,29 +10,42 @@ namespace DataAuth.Sample.WebApi.Controllers
     public class DataAuthController : ControllerBase
     {
         ICoreService _coreService;
+
         public DataAuthController(ICoreService coreService)
         {
             _coreService = coreService;
         }
 
         [HttpGet]
-        public async Task<DataPermissionResult<int>> GetDataPermission(string subjectId, string accessAttributeCode, GrantType grantType = GrantType.ForUser, string? localLookupValue = null)
+        public async Task<DataPermissionResult<int>> GetDataPermission(
+            string subjectId,
+            string accessAttributeCode,
+            GrantType grantType = GrantType.ForUser,
+            string? localLookupValue = null
+        )
         {
-            return await _coreService.GetDataPermissions<int>(subjectId, accessAttributeCode, grantType, localLookupValue);
+            return await _coreService.GetDataPermissions<int>(
+                subjectId,
+                accessAttributeCode,
+                grantType,
+                localLookupValue
+            );
         }
 
         [Route("OrderTypes")]
         [HttpGet]
-        public async Task<DataPermissionResult<Guid>> GetGrantedOrderType(string subjectId, GrantType grantType = GrantType.ForUser, string? localLookupValue = null)
+        public async Task<DataPermissionResult<Guid>> GetGrantedOrderType(
+            string subjectId,
+            GrantType grantType = GrantType.ForUser,
+            string? localLookupValue = null
+        )
         {
-            return await _coreService.GetDataPermissions<Guid>(subjectId, "ORDER_TYPE", grantType, localLookupValue);
-        }
-
-        [Route("InitSamplePermissions")]
-        [HttpPost]
-        public async Task InitSamplePermissions()
-        {
-            throw new NotImplementedException();
+            return await _coreService.GetDataPermissions<Guid>(
+                subjectId,
+                "ORDER_TYPE",
+                grantType,
+                localLookupValue
+            );
         }
     }
 }

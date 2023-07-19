@@ -16,7 +16,10 @@ namespace DataAuth.UserRoles
             _dbContext = dbContext;
         }
 
-        public async Task<UserRoleModel> AddUserRole(UserRoleModel model, CancellationToken cancellationToken = default)
+        public async Task<UserRoleModel> AddUserRole(
+            UserRoleModel model,
+            CancellationToken cancellationToken = default
+        )
         {
             var entity = new UserRole(model.UserId, model.RoleId);
             await _dbContext.AddAsync(entity, cancellationToken);
@@ -24,6 +27,5 @@ namespace DataAuth.UserRoles
             model.Id = entity.Id;
             return model;
         }
-
     }
 }
