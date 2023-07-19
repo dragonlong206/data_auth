@@ -1,0 +1,18 @@
+name: Build and Test
+on: [push]
+jobs:
+  tests:
+    name: Unit Testing
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Restore dependencies
+        run: dotnet restore src
+
+      - name: Build project
+        run: dotnet build src --configuration Release --no-restore
+
+      - name: Run unit tests
+        run: dotnet test src
