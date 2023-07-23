@@ -2,9 +2,11 @@
 using DataAuth.Core;
 using DataAuth.Entities;
 using DataAuth.Enums;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,32 +44,21 @@ namespace DataAuth.DataPermissions
             _cacheProvider.Invalidate(cacheKey);
         }
 
-        public async Task<DataPermissionModel> AddDataPermission(
-            DataPermissionModel model,
+        public async Task AddDataPermission(
+            DataPermission model,
             CancellationToken cancellationToken = default
         )
         {
             ValidateModel(model);
-
-            var entity = new DataPermission(
-                model.GrantType,
-                model.SubjectId,
-                model.AccessAttributeTableId,
-                model.AccessLevel,
-                model.GrantedDataValue
-            );
-            await _dbContext.DataPermissions.AddAsync(entity, cancellationToken);
+            await _dbContext.DataPermissions.AddAsync(model, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            model.Id = entity.Id;
 
-            await InvalidateCache(entity, cancellationToken);
-
-            return model;
+            await InvalidateCache(model, cancellationToken);
         }
 
         // Update DataPermission
-        public async Task<DataPermissionModel> UpdateDataPermission(
-            DataPermissionModel model,
+        public async Task UpdateDataPermission(
+            DataPermission model,
             CancellationToken cancellationToken = default
         )
         {
@@ -86,8 +77,6 @@ namespace DataAuth.DataPermissions
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             await InvalidateCache(entity, cancellationToken);
-
-            return model;
         }
 
         // Delete DataPermission
@@ -171,29 +160,11 @@ namespace DataAuth.DataPermissions
             };
         }
 
-        private static void ValidateModel(DataPermissionModel model)
+        private static void ValidateModel(DataPermission model)
         {
-            // Validate model, requires GrantType, SubjectId, AccessAttributeTableId, AccessLevel
-            if (model.SubjectId == null)
-            {
-                throw new ArgumentException("SubjectId is required");
-            }
-            if (model.AccessAttributeTableId == 0)
-            {
-                throw new ArgumentException("AccessAttributeTableId is required");
-            }
-            // GrantedDataValue is required if AccessLevel is Deep or Specific
-            if (
-                (
-                    model.AccessLevel == AccessLevel.Local
-                    || model.AccessLevel == AccessLevel.Specific
-                ) && string.IsNullOrEmpty(model.GrantedDataValue)
-            )
-            {
-                throw new ArgumentException(
-                    "GrantedDataValue is required when AccessLevel is Local"
-                );
-            }
+            // Validate using FluentValidation defined in DataPermissionValidator
+            var validator = new DataPermissionValidator();
+            validator.ValidateAndThrow(model);
         }
     }
 }

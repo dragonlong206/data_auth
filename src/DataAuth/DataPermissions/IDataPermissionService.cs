@@ -1,15 +1,13 @@
-﻿using DataAuth.Enums;
+﻿using DataAuth.Entities;
+using DataAuth.Enums;
 
 namespace DataAuth.DataPermissions
 {
     public interface IDataPermissionService
     {
-        Task<DataPermissionModel> AddDataPermission(
-            DataPermissionModel model,
-            CancellationToken cancellationToken = default
-        );
-        Task<DataPermissionModel> UpdateDataPermission(
-            DataPermissionModel model,
+        Task AddDataPermission(DataPermission model, CancellationToken cancellationToken = default);
+        Task UpdateDataPermission(
+            DataPermission model,
             CancellationToken cancellationToken = default
         );
 

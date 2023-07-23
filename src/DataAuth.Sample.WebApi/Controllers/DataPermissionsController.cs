@@ -1,5 +1,6 @@
 ﻿using DataAuth.Core;
 using DataAuth.DataPermissions;
+using DataAuth.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -35,14 +36,31 @@ namespace DataAuth.Sample.WebApi.Controllers
         [HttpPost]
         public async Task Post([FromBody] DataPermissionModel model)
         {
-            await _dataPermissionService.AddDataPermission(model);
+            var entity = new DataPermission(
+                model.GrantType,
+                model.SubjectId,
+                model.AccessAttributeTableId,
+                model.AccessLevel,
+                model.GrantedDataValue
+            );
+            await _dataPermissionService.AddDataPermission(entity);
         }
 
         // PUT api/<DataPermissionsController>/5
         [HttpPut("{id}")]
         public async Task Put(int id, [FromBody] DataPermissionModel model)
         {
-            await _dataPermissionService.UpdateDataPermission(model);
+            var entity = new DataPermission(
+                model.GrantType,
+                model.SubjectId,
+                model.AccessAttributeTableId,
+                model.AccessLevel,
+                model.GrantedDataValue
+            )
+            {
+                Id = id
+            };
+            await _dataPermissionService.UpdateDataPermission(entity);
         }
 
         // DELETE api/<DataPermissionsController>/5
