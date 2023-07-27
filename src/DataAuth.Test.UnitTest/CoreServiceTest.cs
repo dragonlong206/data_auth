@@ -290,9 +290,10 @@ namespace DataAuth.Test.UnitTest
                 null
             );
             await accessAttributeTableService.AddAccessAttributeTable(attributeTable3);
-            var rootAttributeTable = await accessAttributeTableService.GetAccessAttributeTable(
-                attributeTable1.Id
-            );
+            var rootAttributeTable =
+                await accessAttributeTableService.GetAccessAttributeTableEntityById(
+                    attributeTable1.Id
+                );
 
             // Exec
             var lookupValue = "999";
