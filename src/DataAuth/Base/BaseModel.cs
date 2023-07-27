@@ -13,11 +13,6 @@ namespace DataAuth.Base
             Id = default!;
         }
 
-        public BaseModel(TKey id)
-        {
-            Id = id;
-        }
-
         public TKey Id { get; internal set; }
     }
 }

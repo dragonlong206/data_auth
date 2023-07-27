@@ -1,9 +1,9 @@
 // Create FluentValidation for DataPermission, GrantedDataValue is required when AccessLevel is Deep or Specific.
-using DataAuth.Entities;
+using DataAuth.DataPermissions;
 using DataAuth.Enums;
 using FluentValidation;
 
-public class DataPermissionValidator : AbstractValidator<DataPermission>
+public class DataPermissionValidator : AbstractValidator<DataPermissionModel>
 {
     public DataPermissionValidator()
     {

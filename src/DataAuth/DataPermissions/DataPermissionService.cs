@@ -45,27 +45,40 @@ namespace DataAuth.DataPermissions
         }
 
         public async Task AddDataPermission(
-            DataPermission model,
+            DataPermissionModel model,
             CancellationToken cancellationToken = default
         )
         {
             ValidateModel(model);
-            await _dbContext.DataPermissions.AddAsync(model, cancellationToken);
+            DataPermission entity = MapModelToEntity(model);
+            await _dbContext.DataPermissions.AddAsync(entity, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            await InvalidateCache(model, cancellationToken);
+            await InvalidateCache(entity, cancellationToken);
+        }
+
+        private static DataPermission MapModelToEntity(DataPermissionModel model)
+        {
+            return new DataPermission(
+                model.GrantType,
+                model.SubjectId,
+                model.AccessAttributeTableId,
+                model.AccessLevel,
+                model.GrantedDataValue
+            );
         }
 
         // Update DataPermission
         public async Task UpdateDataPermission(
-            DataPermission model,
+            int id,
+            DataPermissionModel model,
             CancellationToken cancellationToken = default
         )
         {
             ValidateModel(model);
 
             var entity = await _dbContext.DataPermissions
-                .Where(x => x.Id == model.Id)
+                .Where(x => x.Id == id)
                 .FirstAsync(cancellationToken);
 
             entity.GrantType = model.GrantType;
@@ -160,7 +173,7 @@ namespace DataAuth.DataPermissions
             };
         }
 
-        private static void ValidateModel(DataPermission model)
+        private static void ValidateModel(DataPermissionModel model)
         {
             // Validate using FluentValidation defined in DataPermissionValidator
             var validator = new DataPermissionValidator();

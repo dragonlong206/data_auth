@@ -36,31 +36,14 @@ namespace DataAuth.Sample.WebApi.Controllers
         [HttpPost]
         public async Task Post([FromBody] DataPermissionModel model)
         {
-            var entity = new DataPermission(
-                model.GrantType,
-                model.SubjectId,
-                model.AccessAttributeTableId,
-                model.AccessLevel,
-                model.GrantedDataValue
-            );
-            await _dataPermissionService.AddDataPermission(entity);
+            await _dataPermissionService.AddDataPermission(model);
         }
 
         // PUT api/<DataPermissionsController>/5
         [HttpPut("{id}")]
         public async Task Put(int id, [FromBody] DataPermissionModel model)
         {
-            var entity = new DataPermission(
-                model.GrantType,
-                model.SubjectId,
-                model.AccessAttributeTableId,
-                model.AccessLevel,
-                model.GrantedDataValue
-            )
-            {
-                Id = id
-            };
-            await _dataPermissionService.UpdateDataPermission(entity);
+            await _dataPermissionService.UpdateDataPermission(id, model);
         }
 
         // DELETE api/<DataPermissionsController>/5
