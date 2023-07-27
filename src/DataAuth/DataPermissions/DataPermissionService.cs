@@ -4,12 +4,6 @@ using DataAuth.Entities;
 using DataAuth.Enums;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAuth.DataPermissions
 {
@@ -98,9 +92,11 @@ namespace DataAuth.DataPermissions
             CancellationToken cancellationToken = default
         )
         {
-            var entity = await _dbContext.DataPermissions
-                .Where(x => x.Id == id)
-                .FirstAsync(cancellationToken);
+            var entity = await _dbContext.DataPermissions.FindAsync(id, cancellationToken);
+            if (entity == null)
+            {
+                throw new ObjectNotFoundException("DataPermission", id);
+            }
 
             _dbContext.DataPermissions.Remove(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -133,18 +129,20 @@ namespace DataAuth.DataPermissions
                 query = query.Where(x => x.AccessAttributeTableId == accessAttributeTableId);
             }
 
-            return query.Select(
-                x =>
-                    new DataPermissionModel
-                    {
-                        Id = x.Id,
-                        GrantType = x.GrantType,
-                        SubjectId = x.SubjectId,
-                        AccessAttributeTableId = x.AccessAttributeTableId,
-                        AccessLevel = x.AccessLevel,
-                        GrantedDataValue = x.GrantedDataValue
-                    }
-            );
+            return await query
+                .Select(
+                    x =>
+                        new DataPermissionModel
+                        {
+                            Id = x.Id,
+                            GrantType = x.GrantType,
+                            SubjectId = x.SubjectId,
+                            AccessAttributeTableId = x.AccessAttributeTableId,
+                            AccessLevel = x.AccessLevel,
+                            GrantedDataValue = x.GrantedDataValue
+                        }
+                )
+                .ToListAsync(cancellationToken);
         }
 
         // Get DataPermission by Id, convert to DataPermissionModel
@@ -175,7 +173,6 @@ namespace DataAuth.DataPermissions
 
         private static void ValidateModel(DataPermissionModel model)
         {
-            // Validate using FluentValidation defined in DataPermissionValidator
             var validator = new DataPermissionValidator();
             validator.ValidateAndThrow(model);
         }

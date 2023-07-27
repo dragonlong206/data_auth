@@ -18,16 +18,16 @@ namespace DataAuth.Sample.WebApi.Controllers
 
         // GET: api/<AccessAttributesController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<AccessAttributeModel>> Get()
         {
-            return new string[] { "value1", "value2" };
+            return await _accessAttributeService.GetAccessAttributes();
         }
 
         // GET api/<AccessAttributesController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<AccessAttributeModel?> Get(int id)
         {
-            return "value";
+            return await _accessAttributeService.GetAccessAttributeById(id);
         }
 
         // POST api/<AccessAttributesController>
@@ -39,10 +39,16 @@ namespace DataAuth.Sample.WebApi.Controllers
 
         // PUT api/<AccessAttributesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value) { }
+        public async Task Put(int id, [FromBody] AccessAttributeModel model)
+        {
+            await _accessAttributeService.UpdateAccessAttribute(id, model);
+        }
 
         // DELETE api/<AccessAttributesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id) { }
+        public async Task Delete(int id)
+        {
+            await _accessAttributeService.DeleteAccessAttribute(id);
+        }
     }
 }

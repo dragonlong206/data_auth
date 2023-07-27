@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace DataAuth.AccessAttributes
@@ -12,6 +13,14 @@ namespace DataAuth.AccessAttributes
         public AccessAttributeModel(string code)
         {
             Code = code;
+        }
+
+        [JsonConstructor]
+        public AccessAttributeModel(string code, string? name, string? description)
+        {
+            Code = code;
+            Name = name;
+            Description = description;
         }
 
         public string Code { get; set; }
