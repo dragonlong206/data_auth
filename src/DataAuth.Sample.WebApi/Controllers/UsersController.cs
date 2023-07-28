@@ -15,10 +15,14 @@ namespace DataAuth.Sample.WebApi.Controllers
             _userRoleService = userRoleService;
         }
 
-        [HttpPost("roles")]
-        public async Task AddRole([FromBody] UserRoleModel model)
+        [HttpPost("{id}/roles")]
+        public async Task AddRole(
+            [FromRoute] string id,
+            [FromBody] IEnumerable<int> roleIds,
+            CancellationToken cancellationToken
+        )
         {
-            await _userRoleService.AddUserRole(model);
+            await _userRoleService.AddUserRoles(id, roleIds, cancellationToken);
         }
     }
 }

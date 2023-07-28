@@ -12,5 +12,22 @@ namespace DataAuth.AccessAttributes
             AccessAttributeModel model,
             CancellationToken cancellationToken = default
         );
+
+        Task<AccessAttributeModel> UpdateAccessAttribute(
+            int id,
+            AccessAttributeModel model,
+            CancellationToken cancellationToken = default
+        );
+
+        Task DeleteAccessAttribute(int id, CancellationToken cancellationToken = default);
+
+        Task<AccessAttributeModel?> GetAccessAttributeById(
+            int id,
+            CancellationToken cancellationToken = default
+        );
+
+        Task<IEnumerable<AccessAttributeModel>> GetAccessAttributes(
+            CancellationToken cancellationToken = default
+        );
     }
 }

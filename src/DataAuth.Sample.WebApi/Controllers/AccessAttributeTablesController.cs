@@ -20,31 +20,56 @@ namespace DataAuth.Sample.WebApi.Controllers
 
         // GET: api/<AccessAttributeTablesController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<AccessAttributeTableModel>> Get(
+            CancellationToken cancellationToken
+        )
         {
-            return new string[] { "value1", "value2" };
+            return await _accessAttributeTableService.GetAccessAttributeTables(cancellationToken);
         }
 
         // GET api/<AccessAttributeTablesController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<AccessAttributeTableModel?> Get(
+            int id,
+            CancellationToken cancellationToken
+        )
         {
-            return "value";
+            return await _accessAttributeTableService.GetAccessAttributeTableById(
+                id,
+                cancellationToken
+            );
         }
 
         // POST api/<AccessAttributeTablesController>
         [HttpPost]
-        public async Task Post([FromBody] AccessAttributeTableModel model)
+        public async Task Post(
+            [FromBody] AccessAttributeTableModel model,
+            CancellationToken cancellationToken
+        )
         {
-            await _accessAttributeTableService.AddAccessAttributeTable(model);
+            await _accessAttributeTableService.AddAccessAttributeTable(model, cancellationToken);
         }
 
         // PUT api/<AccessAttributeTablesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value) { }
+        public async Task Put(
+            int id,
+            [FromBody] AccessAttributeTableModel model,
+            CancellationToken cancellationToken
+        )
+        {
+            await _accessAttributeTableService.UpdateAccessAttributeTable(
+                id,
+                model,
+                cancellationToken
+            );
+        }
 
         // DELETE api/<AccessAttributeTablesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id) { }
+        public async Task Delete(int id, CancellationToken cancellationToken)
+        {
+            await _accessAttributeTableService.DeleteAccessAttributeTable(id, cancellationToken);
+        }
     }
 }

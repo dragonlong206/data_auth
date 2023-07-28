@@ -12,5 +12,24 @@ namespace DataAuth.UserRoles
             UserRoleModel model,
             CancellationToken cancellationToken = default
         );
+
+        Task AddUserRoles(
+            string userId,
+            IEnumerable<int> roleIds,
+            CancellationToken cancellationToken = default
+        );
+
+        Task<UserRoleModel> UpdateUserRole(
+            int id,
+            UserRoleModel model,
+            CancellationToken cancellationToken = default
+        );
+        Task DeleteUserRole(int id, CancellationToken cancellationToken = default);
+
+        Task<IEnumerable<UserRoleModel>> GetUserRoles(
+            CancellationToken cancellationToken = default
+        );
+
+        Task<UserRoleModel?> GetUserRoleById(int id, CancellationToken cancellationToken = default);
     }
 }

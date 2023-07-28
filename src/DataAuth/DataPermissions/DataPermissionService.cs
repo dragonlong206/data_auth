@@ -2,12 +2,8 @@
 using DataAuth.Core;
 using DataAuth.Entities;
 using DataAuth.Enums;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAuth.DataPermissions
 {
@@ -42,31 +38,33 @@ namespace DataAuth.DataPermissions
             _cacheProvider.Invalidate(cacheKey);
         }
 
-        public async Task<DataPermissionModel> AddDataPermission(
+        public async Task AddDataPermission(
             DataPermissionModel model,
             CancellationToken cancellationToken = default
         )
         {
             ValidateModel(model);
+            DataPermission entity = MapModelToEntity(model);
+            await _dbContext.DataPermissions.AddAsync(entity, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var entity = new DataPermission(
+            await InvalidateCache(entity, cancellationToken);
+        }
+
+        private static DataPermission MapModelToEntity(DataPermissionModel model)
+        {
+            return new DataPermission(
                 model.GrantType,
                 model.SubjectId,
                 model.AccessAttributeTableId,
                 model.AccessLevel,
                 model.GrantedDataValue
             );
-            await _dbContext.DataPermissions.AddAsync(entity, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            model.Id = entity.Id;
-
-            await InvalidateCache(entity, cancellationToken);
-
-            return model;
         }
 
         // Update DataPermission
-        public async Task<DataPermissionModel> UpdateDataPermission(
+        public async Task UpdateDataPermission(
+            int id,
             DataPermissionModel model,
             CancellationToken cancellationToken = default
         )
@@ -74,7 +72,7 @@ namespace DataAuth.DataPermissions
             ValidateModel(model);
 
             var entity = await _dbContext.DataPermissions
-                .Where(x => x.Id == model.Id)
+                .Where(x => x.Id == id)
                 .FirstAsync(cancellationToken);
 
             entity.GrantType = model.GrantType;
@@ -86,8 +84,6 @@ namespace DataAuth.DataPermissions
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             await InvalidateCache(entity, cancellationToken);
-
-            return model;
         }
 
         // Delete DataPermission
@@ -96,9 +92,11 @@ namespace DataAuth.DataPermissions
             CancellationToken cancellationToken = default
         )
         {
-            var entity = await _dbContext.DataPermissions
-                .Where(x => x.Id == id)
-                .FirstAsync(cancellationToken);
+            var entity = await _dbContext.DataPermissions.FindAsync(id, cancellationToken);
+            if (entity == null)
+            {
+                throw new ObjectNotFoundException("DataPermission", id);
+            }
 
             _dbContext.DataPermissions.Remove(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -131,18 +129,20 @@ namespace DataAuth.DataPermissions
                 query = query.Where(x => x.AccessAttributeTableId == accessAttributeTableId);
             }
 
-            return query.Select(
-                x =>
-                    new DataPermissionModel
-                    {
-                        Id = x.Id,
-                        GrantType = x.GrantType,
-                        SubjectId = x.SubjectId,
-                        AccessAttributeTableId = x.AccessAttributeTableId,
-                        AccessLevel = x.AccessLevel,
-                        GrantedDataValue = x.GrantedDataValue
-                    }
-            );
+            return await query
+                .Select(
+                    x =>
+                        new DataPermissionModel
+                        {
+                            Id = x.Id,
+                            GrantType = x.GrantType,
+                            SubjectId = x.SubjectId,
+                            AccessAttributeTableId = x.AccessAttributeTableId,
+                            AccessLevel = x.AccessLevel,
+                            GrantedDataValue = x.GrantedDataValue
+                        }
+                )
+                .ToListAsync(cancellationToken);
         }
 
         // Get DataPermission by Id, convert to DataPermissionModel
@@ -173,27 +173,8 @@ namespace DataAuth.DataPermissions
 
         private static void ValidateModel(DataPermissionModel model)
         {
-            // Validate model, requires GrantType, SubjectId, AccessAttributeTableId, AccessLevel
-            if (model.SubjectId == null)
-            {
-                throw new ArgumentException("SubjectId is required");
-            }
-            if (model.AccessAttributeTableId == 0)
-            {
-                throw new ArgumentException("AccessAttributeTableId is required");
-            }
-            // GrantedDataValue is required if AccessLevel is Deep or Specific
-            if (
-                (
-                    model.AccessLevel == AccessLevel.Local
-                    || model.AccessLevel == AccessLevel.Specific
-                ) && string.IsNullOrEmpty(model.GrantedDataValue)
-            )
-            {
-                throw new ArgumentException(
-                    "GrantedDataValue is required when AccessLevel is Local"
-                );
-            }
+            var validator = new DataPermissionValidator();
+            validator.ValidateAndThrow(model);
         }
     }
 }

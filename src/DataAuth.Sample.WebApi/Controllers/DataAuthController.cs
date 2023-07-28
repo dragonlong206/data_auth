@@ -37,14 +37,16 @@ namespace DataAuth.Sample.WebApi.Controllers
         public async Task<DataPermissionResult<Guid>> GetGrantedOrderType(
             string subjectId,
             GrantType grantType = GrantType.ForUser,
-            string? localLookupValue = null
+            string? localLookupValue = null,
+            CancellationToken cancellationToken = default
         )
         {
             return await _coreService.GetDataPermissions<Guid>(
                 subjectId,
                 "ORDER_TYPE",
                 grantType,
-                localLookupValue
+                localLookupValue,
+                cancellationToken
             );
         }
     }

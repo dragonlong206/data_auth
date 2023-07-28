@@ -4,11 +4,12 @@ namespace DataAuth.DataPermissions
 {
     public interface IDataPermissionService
     {
-        Task<DataPermissionModel> AddDataPermission(
+        Task AddDataPermission(
             DataPermissionModel model,
             CancellationToken cancellationToken = default
         );
-        Task<DataPermissionModel> UpdateDataPermission(
+        Task UpdateDataPermission(
+            int id,
             DataPermissionModel model,
             CancellationToken cancellationToken = default
         );
