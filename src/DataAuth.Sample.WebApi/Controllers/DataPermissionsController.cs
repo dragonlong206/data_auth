@@ -20,37 +20,46 @@ namespace DataAuth.Sample.WebApi.Controllers
 
         // GET: api/<DataPermissionsController>
         [HttpGet]
-        public async Task<IEnumerable<DataPermissionModel>> Get()
+        public async Task<IEnumerable<DataPermissionModel>> Get(CancellationToken cancellationToken)
         {
-            return await _dataPermissionService.GetDataPermissions();
+            return await _dataPermissionService.GetDataPermissions(
+                cancellationToken: cancellationToken
+            );
         }
 
         // GET api/<DataPermissionsController>/5
         [HttpGet("{id}")]
-        public async Task<DataPermissionModel?> Get(int id)
+        public async Task<DataPermissionModel?> Get(int id, CancellationToken cancellationToken)
         {
-            return await _dataPermissionService.GetDataPermissionById(id);
+            return await _dataPermissionService.GetDataPermissionById(id, cancellationToken);
         }
 
         // POST api/<DataPermissionsController>
         [HttpPost]
-        public async Task Post([FromBody] DataPermissionModel model)
+        public async Task Post(
+            [FromBody] DataPermissionModel model,
+            CancellationToken cancellationToken
+        )
         {
-            await _dataPermissionService.AddDataPermission(model);
+            await _dataPermissionService.AddDataPermission(model, cancellationToken);
         }
 
         // PUT api/<DataPermissionsController>/5
         [HttpPut("{id}")]
-        public async Task Put(int id, [FromBody] DataPermissionModel model)
+        public async Task Put(
+            int id,
+            [FromBody] DataPermissionModel model,
+            CancellationToken cancellationToken
+        )
         {
-            await _dataPermissionService.UpdateDataPermission(id, model);
+            await _dataPermissionService.UpdateDataPermission(id, model, cancellationToken);
         }
 
         // DELETE api/<DataPermissionsController>/5
         [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        public async Task Delete(int id, CancellationToken cancellationToken)
         {
-            await _dataPermissionService.DeleteDataPermission(id);
+            await _dataPermissionService.DeleteDataPermission(id, cancellationToken);
         }
     }
 }

@@ -18,31 +18,41 @@ namespace DataAuth.Sample.WebApi.Controllers
 
         // GET: api/<RolesController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<RoleModel>> Get(CancellationToken cancellationToken)
         {
-            return new string[] { "value1", "value2" };
+            return await _roleService.GetRoles(cancellationToken);
         }
 
         // GET api/<RolesController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<RoleModel?> Get(int id, CancellationToken cancellationToken)
         {
-            return "value";
+            return await _roleService.GetRoleById(id, cancellationToken);
         }
 
         // POST api/<RolesController>
         [HttpPost]
-        public async Task Post([FromBody] RoleModel model)
+        public async Task Post([FromBody] RoleModel model, CancellationToken cancellationToken)
         {
-            await _roleService.AddRole(model);
+            await _roleService.AddRole(model, cancellationToken);
         }
 
         // PUT api/<RolesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value) { }
+        public async Task Put(
+            int id,
+            [FromBody] RoleModel model,
+            CancellationToken cancellationToken
+        )
+        {
+            await _roleService.UpdateRole(id, model, cancellationToken);
+        }
 
         // DELETE api/<RolesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id) { }
+        public async Task Delete(int id, CancellationToken cancellationToken)
+        {
+            await _roleService.DeleteRole(id, cancellationToken);
+        }
     }
 }
