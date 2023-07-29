@@ -1,4 +1,4 @@
-using DataAuth.AccessAttributes;
+using DataAuth.Domains.AccessAttributes;
 using FluentValidation;
 
 public class AccessAttributeValidator : AbstractValidator<AccessAttributeModel>

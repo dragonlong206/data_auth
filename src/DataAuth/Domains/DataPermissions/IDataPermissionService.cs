@@ -1,6 +1,6 @@
 ﻿using DataAuth.Enums;
 
-namespace DataAuth.DataPermissions
+namespace DataAuth.Domains.DataPermissions
 {
     public interface IDataPermissionService
     {

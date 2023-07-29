@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAuth.AccessAttributes
+namespace DataAuth.Domains.AccessAttributes
 {
     public interface IAccessAttributeService
     {

@@ -1,6 +1,6 @@
 ﻿using DataAuth.Base;
 
-namespace DataAuth.AccessAttributeTables
+namespace DataAuth.Domains.AccessAttributeTables
 {
     public class AccessAttributeTableModel : BaseModel<int>
     {

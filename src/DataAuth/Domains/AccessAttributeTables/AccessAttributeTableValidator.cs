@@ -1,5 +1,5 @@
 // Create FluentValidator for AccessAttributeTableModel
-using DataAuth.AccessAttributeTables;
+using DataAuth.Domains.AccessAttributeTables;
 using FluentValidation;
 
 public class AccessAttributeTableValidator : AbstractValidator<AccessAttributeTableModel>

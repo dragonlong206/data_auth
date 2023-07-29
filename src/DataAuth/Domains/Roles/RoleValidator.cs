@@ -1,4 +1,4 @@
-using DataAuth.Roles;
+using DataAuth.Domains.Roles;
 using FluentValidation;
 
 public class RoleValidator : AbstractValidator<RoleModel>

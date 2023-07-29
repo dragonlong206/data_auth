@@ -1,6 +1,6 @@
 ﻿using DataAuth.Base;
 
-namespace DataAuth.UserRoles
+namespace DataAuth.Domains.UserRoles
 {
     public class UserRoleModel : BaseModel<int>
     {

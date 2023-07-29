@@ -2,7 +2,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAuth.AccessAttributes
+namespace DataAuth.Domains.AccessAttributes
 {
     public class AccessAttributeService : IAccessAttributeService
     {
