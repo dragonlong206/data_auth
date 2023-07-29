@@ -4,6 +4,12 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Title>Data filtering and authorization</Title>
+    <Description>Provide a mechanism for data filtering and authorization in enterprise applications</Description>
+    <PackageProjectUrl>https://github.com/dragonlong206/data_auth</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dragonlong206/data_auth</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>data authorization, data security, data filtering, erp, enterprise</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
