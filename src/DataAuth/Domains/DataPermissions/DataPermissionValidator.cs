@@ -1,5 +1,5 @@
 // Create FluentValidation for DataPermission, GrantedDataValue is required when AccessLevel is Deep or Specific.
-using DataAuth.DataPermissions;
+using DataAuth.Domains.DataPermissions;
 using DataAuth.Enums;
 using FluentValidation;
 

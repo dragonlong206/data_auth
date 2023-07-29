@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace DataAuth.AccessAttributes
+namespace DataAuth.Domains.AccessAttributes
 {
     public class AccessAttributeModel : BaseModel<int>
     {

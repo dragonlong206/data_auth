@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAuth.Roles
+namespace DataAuth.Domains.Roles
 {
     public class RoleModel : BaseModel<int>
     {

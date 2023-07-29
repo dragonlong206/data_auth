@@ -2,7 +2,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAuth.UserRoles
+namespace DataAuth.Domains.UserRoles
 {
     public class UserRoleService : IUserRoleService
     {

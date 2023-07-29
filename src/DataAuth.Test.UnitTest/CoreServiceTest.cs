@@ -1,7 +1,7 @@
-using DataAuth.AccessAttributes;
-using DataAuth.AccessAttributeTables;
 using DataAuth.Cache;
 using DataAuth.Core;
+using DataAuth.Domains.AccessAttributes;
+using DataAuth.Domains.AccessAttributeTables;
 using DataAuth.Entities;
 using DataAuth.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +10,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace DataAuth.Test.UnitTest

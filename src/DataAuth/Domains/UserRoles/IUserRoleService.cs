@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAuth.UserRoles
+namespace DataAuth.Domains.UserRoles
 {
     public interface IUserRoleService
     {

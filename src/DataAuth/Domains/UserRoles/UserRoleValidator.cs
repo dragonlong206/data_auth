@@ -1,5 +1,5 @@
+using DataAuth.Domains.UserRoles;
 using DataAuth.Entities;
-using DataAuth.UserRoles;
 using FluentValidation;
 
 public class UserRoleValidator : AbstractValidator<UserRoleModel>

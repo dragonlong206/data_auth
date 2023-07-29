@@ -5,7 +5,7 @@ using DataAuth.Enums;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAuth.DataPermissions
+namespace DataAuth.Domains.DataPermissions
 {
     public class DataPermissionService : IDataPermissionService
     {
@@ -27,7 +27,7 @@ namespace DataAuth.DataPermissions
                 .AsNoTracking()
                 .Where(x => x.Id == permission.Id)
                 .Include(x => x.AccessAttributeTable)
-                .ThenInclude(t => t.AccessAttribute)
+                .ThenInclude(t => t!.AccessAttribute)
                 .FirstAsync(cancellationToken);
 
             var cacheKey = CoreService.GetCacheKey(
@@ -132,11 +132,10 @@ namespace DataAuth.DataPermissions
             return await query
                 .Select(
                     x =>
-                        new DataPermissionModel
+                        new DataPermissionModel(x.SubjectId)
                         {
                             Id = x.Id,
                             GrantType = x.GrantType,
-                            SubjectId = x.SubjectId,
                             AccessAttributeTableId = x.AccessAttributeTableId,
                             AccessLevel = x.AccessLevel,
                             GrantedDataValue = x.GrantedDataValue
@@ -160,11 +159,10 @@ namespace DataAuth.DataPermissions
                 return null;
             }
 
-            return new DataPermissionModel
+            return new DataPermissionModel(entity.SubjectId)
             {
                 Id = entity.Id,
                 GrantType = entity.GrantType,
-                SubjectId = entity.SubjectId,
                 AccessAttributeTableId = entity.AccessAttributeTableId,
                 AccessLevel = entity.AccessLevel,
                 GrantedDataValue = entity.GrantedDataValue

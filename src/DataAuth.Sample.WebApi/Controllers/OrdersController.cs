@@ -21,11 +21,13 @@ namespace DataAuth.Sample.WebApi.Controllers
         [HttpGet]
         public async Task<IEnumerable<Order>> Get()
         {
+#pragma warning disable CS8629 // Nullable value type may be null.
             var orders = await _dbContext.Orders.WithDataAuthAsync<Order, int>(
                 "2",
                 "STORE",
                 x => x.StoreId.Value
             );
+#pragma warning restore CS8629 // Nullable value type may be null.
             return orders;
         }
 

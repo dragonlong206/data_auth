@@ -1,10 +1,15 @@
 ﻿using DataAuth.Base;
 using DataAuth.Enums;
 
-namespace DataAuth.DataPermissions
+namespace DataAuth.Domains.DataPermissions
 {
     public class DataPermissionModel : BaseModel<int>
     {
+        public DataPermissionModel(string subjectId)
+        {
+            SubjectId = subjectId;
+        }
+
         public GrantType GrantType { get; set; }
 
         /// <summary>

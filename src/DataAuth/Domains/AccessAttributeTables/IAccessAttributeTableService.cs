@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAuth.AccessAttributeTables
+namespace DataAuth.Domains.AccessAttributeTables
 {
     public interface IAccessAttributeTableService
     {

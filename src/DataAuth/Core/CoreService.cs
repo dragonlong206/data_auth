@@ -1,10 +1,8 @@
-﻿using DataAuth.AccessAttributes;
-using DataAuth.Cache;
+﻿using DataAuth.Cache;
 using DataAuth.Entities;
 using DataAuth.Enums;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DataAuth.Core
 {
