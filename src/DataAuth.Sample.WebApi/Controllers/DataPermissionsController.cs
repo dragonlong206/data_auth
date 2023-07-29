@@ -1,6 +1,4 @@
-﻿using DataAuth.Core;
-using DataAuth.DataPermissions;
-using DataAuth.Entities;
+﻿using DataAuth.Domains.DataPermissions;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860

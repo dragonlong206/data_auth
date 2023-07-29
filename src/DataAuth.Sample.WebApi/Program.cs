@@ -1,12 +1,12 @@
 using DataAuth;
-using DataAuth.AccessAttributes;
-using DataAuth.AccessAttributeTables;
+using DataAuth.Domains.AccessAttributes;
+using DataAuth.Domains.AccessAttributeTables;
 using DataAuth.Cache;
 using DataAuth.Core;
-using DataAuth.DataPermissions;
-using DataAuth.Roles;
+using DataAuth.Domains.DataPermissions;
+using DataAuth.Domains.Roles;
 using DataAuth.Sample.WebApi;
-using DataAuth.UserRoles;
+using DataAuth.Domains.UserRoles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 

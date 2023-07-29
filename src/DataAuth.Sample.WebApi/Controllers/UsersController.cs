@@ -1,4 +1,4 @@
-﻿using DataAuth.UserRoles;
+﻿using DataAuth.Domains.UserRoles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
