@@ -1,4 +1,5 @@
 ﻿using DataAuth.Entities;
+using DataAuth.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAuth
@@ -23,6 +24,12 @@ namespace DataAuth
             modelBuilder.Entity<Role>().HasIndex(a => a.Code).IsUnique();
 
             modelBuilder.Entity<UserRole>().HasIndex(x => new { x.UserId, x.RoleId }).IsUnique();
+
+            modelBuilder
+                .Entity<DataPermission>()
+                .Property(p => p.FunctionCode)
+                .IsRequired()
+                .HasDefaultValue(FunctionCode.All);
 
             base.OnModelCreating(modelBuilder);
         }
