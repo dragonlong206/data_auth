@@ -52,7 +52,7 @@ namespace DataAuth.Test.UnitTest
 
         [TestCategory("GetDataPermissions")]
         [TestMethod]
-        public async Task GettingDataAndSetToCacheWhenCacheEmpty()
+        public async Task GetDataAndSetToCacheWhenCacheEmpty()
         {
             var subjectId = Guid.NewGuid().ToString();
             var accessAttributeCode = "TEST";
@@ -98,6 +98,14 @@ namespace DataAuth.Test.UnitTest
 
             cacheProviderMock.Verify(c => c.Get<DataPermissionResult<int>>(cacheKey), Times.Once);
             cacheProviderMock.Verify(c => c.Set(cacheKey, permissions, 24), Times.Never);
+        }
+
+        [TestCategory("GetDataPermissions")]
+        [TestMethod]
+        public async Task GetDataPermissionByFunctionCode()
+        {
+            // Insert 2 different permissions for 2 differrent function codes, get data permission by one function code
+            // Assert that result match with the passing function code
         }
 
         [TestCategory("GenerateQuery")]

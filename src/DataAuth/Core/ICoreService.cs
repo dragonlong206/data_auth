@@ -11,6 +11,7 @@ namespace DataAuth.Core
             string accessAttributeCode,
             GrantType grantType = GrantType.ForUser,
             string? localLookupValue = null,
+            string functionCode = FunctionCode.All,
             CancellationToken cancellationToken = default
         )
             where TKey : struct;

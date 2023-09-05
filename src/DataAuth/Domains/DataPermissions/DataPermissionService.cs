@@ -58,7 +58,8 @@ namespace DataAuth.Domains.DataPermissions
                 model.SubjectId,
                 model.AccessAttributeTableId,
                 model.AccessLevel,
-                model.GrantedDataValue
+                model.GrantedDataValue,
+                model.FunctionCode
             );
         }
 
@@ -80,6 +81,7 @@ namespace DataAuth.Domains.DataPermissions
             entity.AccessAttributeTableId = model.AccessAttributeTableId;
             entity.AccessLevel = model.AccessLevel;
             entity.GrantedDataValue = model.GrantedDataValue;
+            entity.FunctionCode = model.FunctionCode;
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -138,7 +140,8 @@ namespace DataAuth.Domains.DataPermissions
                             GrantType = x.GrantType,
                             AccessAttributeTableId = x.AccessAttributeTableId,
                             AccessLevel = x.AccessLevel,
-                            GrantedDataValue = x.GrantedDataValue
+                            GrantedDataValue = x.GrantedDataValue,
+                            FunctionCode = x.FunctionCode
                         }
                 )
                 .ToListAsync(cancellationToken);
@@ -165,7 +168,8 @@ namespace DataAuth.Domains.DataPermissions
                 GrantType = entity.GrantType,
                 AccessAttributeTableId = entity.AccessAttributeTableId,
                 AccessLevel = entity.AccessLevel,
-                GrantedDataValue = entity.GrantedDataValue
+                GrantedDataValue = entity.GrantedDataValue,
+                FunctionCode = entity.FunctionCode
             };
         }
 

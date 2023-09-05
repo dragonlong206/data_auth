@@ -65,6 +65,6 @@ namespace DataAuth.Entities
         /// <summary>
         /// The function that you want to grant permission. Refer to FunctionCode class. Default value is "All".
         /// </summary>
-        public string? FunctionCode { get; set; }
+        public string FunctionCode { get; set; }
     }
 }

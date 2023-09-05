@@ -31,6 +31,7 @@ namespace DataAuth.Core
             string accessAttributeCode,
             GrantType grantType = GrantType.ForUser,
             string? localLookupValue = null,
+            string functionCode = FunctionCode.All,
             CancellationToken cancellationToken = default
         )
             where TKey : struct
@@ -48,6 +49,8 @@ namespace DataAuth.Core
                 accessAttributeCode,
                 grantType,
                 result,
+                localLookupValue,
+                functionCode,
                 cancellationToken
             );
 
@@ -61,6 +64,8 @@ namespace DataAuth.Core
             string accessAttributeCode,
             GrantType grantType,
             DataPermissionResult<TKey> result,
+            string? localLookupValue,
+            string functionCode,
             CancellationToken cancellationToken
         )
             where TKey : struct
@@ -74,13 +79,14 @@ namespace DataAuth.Core
                         x.SubjectId == subjectId
                         && x.GrantType == grantType
                         && x.AccessAttributeTable!.AccessAttribute!.Code == accessAttributeCode
+                        && x.FunctionCode == functionCode
                 )
                 .ToListAsync(cancellationToken);
 
             // If subject is user then get all roles of the user and then get all permissions of those roles.
             if (grantType == GrantType.ForUser)
             {
-                var dataPermissionOfRoles = await GetPermissionsByRolesOfUser(
+                var dataPermissionOfRoles = await GetPermissionsByUser(
                     subjectId,
                     accessAttributeCode,
                     cancellationToken
@@ -92,7 +98,7 @@ namespace DataAuth.Core
             {
                 foreach (var permission in dataPermissions)
                 {
-                    var query = await GenerateQueryString(permission);
+                    var query = await GenerateQueryString(permission, localLookupValue);
                     var grantedData = await _dbContext.Database
                         .SqlQueryRaw<TKey>(query.QueryString, query.QueryParams.ToArray())
                         .ToListAsync(cancellationToken);
@@ -109,7 +115,7 @@ namespace DataAuth.Core
             }
         }
 
-        private async Task<List<DataPermission>> GetPermissionsByRolesOfUser(
+        private async Task<List<DataPermission>> GetPermissionsByUser(
             string userId,
             string accessAttributeCode,
             CancellationToken cancellationToken

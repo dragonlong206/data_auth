@@ -27,7 +27,8 @@ namespace DataAuth.Core
             Expression<Func<T, TKey>> filterProperty,
             CancellationToken cancellationToken = default,
             GrantType grantType = GrantType.ForUser,
-            string? localLookupValue = null
+            string? localLookupValue = null,
+            string functionCode = FunctionCode.All
         )
             where T : class
             where TKey : struct
@@ -48,6 +49,7 @@ namespace DataAuth.Core
                 accessAttributeCode,
                 grantType,
                 localLookupValue,
+                functionCode,
                 cancellationToken
             );
             var grantedData = permissionResult.GrantedValues;
