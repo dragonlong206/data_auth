@@ -34,7 +34,6 @@ namespace DataAuth.Core
             string functionCode = FunctionCode.All,
             CancellationToken cancellationToken = default
         )
-            where TKey : struct
         {
             var result = new DataPermissionResult<TKey>();
             var cacheKey = GetCacheKey(subjectId, accessAttributeCode, grantType);
@@ -44,11 +43,10 @@ namespace DataAuth.Core
                 return dataFromCache;
             }
 
-            await GetDataPermissionFromDatabase(
+            result = await GetDataPermissionFromDatabase<TKey>(
                 subjectId,
                 accessAttributeCode,
                 grantType,
-                result,
                 localLookupValue,
                 functionCode,
                 cancellationToken
@@ -59,17 +57,16 @@ namespace DataAuth.Core
             return result;
         }
 
-        private async Task GetDataPermissionFromDatabase<TKey>(
+        private async Task<DataPermissionResult<TKey>> GetDataPermissionFromDatabase<TKey>(
             string subjectId,
             string accessAttributeCode,
             GrantType grantType,
-            DataPermissionResult<TKey> result,
             string? localLookupValue,
             string functionCode,
             CancellationToken cancellationToken
         )
-            where TKey : struct
         {
+            var result = new DataPermissionResult<TKey>();
             var dataPermissions = await _dbContext.DataPermissions
                 .AsNoTracking()
                 .Include(x => x.AccessAttributeTable)
@@ -94,6 +91,7 @@ namespace DataAuth.Core
                 dataPermissions.AddRange(dataPermissionOfRoles);
             }
             var allGrantedData = new List<TKey>();
+            var allPermissionDetails = new List<DataPermissionResultDetail<TKey>>();
             if (dataPermissions != null && dataPermissions.Any())
             {
                 foreach (var permission in dataPermissions)
@@ -104,15 +102,20 @@ namespace DataAuth.Core
                         .ToListAsync(cancellationToken);
                     var resultDetail = new DataPermissionResultDetail<TKey>()
                     {
+                        Id = permission.Id,
                         AccessLevel = permission.AccessLevel,
                         IdColumn = permission.AccessAttributeTable!.IdColumn,
                         TableName = permission.AccessAttributeTable!.TableName,
                         GrantedValues = grantedData
                     };
+
+                    allPermissionDetails.Add(resultDetail);
                     allGrantedData.AddRange(grantedData);
                 }
+                result.PermissionDetails = allPermissionDetails;
                 result.GrantedValues = allGrantedData.Distinct().ToArray();
             }
+            return result;
         }
 
         private async Task<List<DataPermission>> GetPermissionsByUser(

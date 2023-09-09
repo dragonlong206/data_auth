@@ -31,7 +31,6 @@ namespace DataAuth.Core
             string functionCode = FunctionCode.All
         )
             where T : class
-            where TKey : struct
         {
             if (_serviceProvider == null)
             {

@@ -5,10 +5,10 @@ namespace DataAuth.Domains.DataPermissions
 {
     public class DataPermissionModel : BaseModel<int>
     {
-        public DataPermissionModel(string subjectId)
+        public DataPermissionModel(string subjectId, string functionCode = Enums.FunctionCode.All)
         {
             SubjectId = subjectId;
-            FunctionCode = Enums.FunctionCode.All;
+            FunctionCode = functionCode;
         }
 
         public GrantType GrantType { get; set; }

@@ -134,14 +134,13 @@ namespace DataAuth.Domains.DataPermissions
             return await query
                 .Select(
                     x =>
-                        new DataPermissionModel(x.SubjectId)
+                        new DataPermissionModel(x.SubjectId, x.FunctionCode)
                         {
                             Id = x.Id,
                             GrantType = x.GrantType,
                             AccessAttributeTableId = x.AccessAttributeTableId,
                             AccessLevel = x.AccessLevel,
-                            GrantedDataValue = x.GrantedDataValue,
-                            FunctionCode = x.FunctionCode
+                            GrantedDataValue = x.GrantedDataValue
                         }
                 )
                 .ToListAsync(cancellationToken);

@@ -13,8 +13,7 @@ namespace DataAuth.Core
             string? localLookupValue = null,
             string functionCode = FunctionCode.All,
             CancellationToken cancellationToken = default
-        )
-            where TKey : struct;
+        );
         Task<(string QueryString, IList<SqlParameter> QueryParams)> GenerateQueryString(
             DataPermission permission,
             string? localLookupValue = null
