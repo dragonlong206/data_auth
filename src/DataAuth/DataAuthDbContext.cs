@@ -34,6 +34,12 @@ namespace DataAuth
             base.OnModelCreating(modelBuilder);
         }
 
+        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        // {
+        //     optionsBuilder.LogTo(Console.WriteLine);
+        //     base.OnConfiguring(optionsBuilder);
+        // }
+
         public virtual DbSet<AccessAttribute> AccessAttributes { get; set; }
 
         public virtual DbSet<AccessAttributeTable> AccessAttributeTables { get; set; }

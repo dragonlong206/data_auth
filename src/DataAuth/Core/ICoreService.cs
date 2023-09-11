@@ -18,5 +18,13 @@ namespace DataAuth.Core
             DataPermission permission,
             string? localLookupValue = null
         );
+
+        Task<List<DataPermission>> GetDataPermissionEntities(
+            string subjectId,
+            string accessAttributeCode,
+            GrantType grantType,
+            string functionCode,
+            CancellationToken cancellationToken
+        );
     }
 }

@@ -20,10 +20,11 @@ namespace DataAuth.Core
         public static string GetCacheKey(
             string subjectId,
             string accessAttributeCode,
-            GrantType grantType
+            GrantType grantType,
+            string functionCode
         )
         {
-            return string.Join("_", subjectId, accessAttributeCode, grantType);
+            return string.Join("_", subjectId, accessAttributeCode, grantType, functionCode);
         }
 
         public async Task<DataPermissionResult<TKey>> GetDataPermissions<TKey>(
@@ -36,7 +37,7 @@ namespace DataAuth.Core
         )
         {
             var result = new DataPermissionResult<TKey>();
-            var cacheKey = GetCacheKey(subjectId, accessAttributeCode, grantType);
+            var cacheKey = GetCacheKey(subjectId, accessAttributeCode, grantType, functionCode);
             var dataFromCache = _cacheProvider.Get<DataPermissionResult<TKey>>(cacheKey);
             if (dataFromCache != null)
             {
@@ -67,29 +68,13 @@ namespace DataAuth.Core
         )
         {
             var result = new DataPermissionResult<TKey>();
-            var dataPermissions = await _dbContext.DataPermissions
-                .AsNoTracking()
-                .Include(x => x.AccessAttributeTable)
-                .ThenInclude(a => a!.AccessAttribute)
-                .Where(
-                    x =>
-                        x.SubjectId == subjectId
-                        && x.GrantType == grantType
-                        && x.AccessAttributeTable!.AccessAttribute!.Code == accessAttributeCode
-                        && x.FunctionCode == functionCode
-                )
-                .ToListAsync(cancellationToken);
-
-            // If subject is user then get all roles of the user and then get all permissions of those roles.
-            if (grantType == GrantType.ForUser)
-            {
-                var dataPermissionOfRoles = await GetPermissionsByUser(
-                    subjectId,
-                    accessAttributeCode,
-                    cancellationToken
-                );
-                dataPermissions.AddRange(dataPermissionOfRoles);
-            }
+            var dataPermissions = await GetDataPermissionEntities(
+                subjectId,
+                accessAttributeCode,
+                grantType,
+                functionCode,
+                cancellationToken
+            );
             var allGrantedData = new List<TKey>();
             var allPermissionDetails = new List<DataPermissionResultDetail<TKey>>();
             if (dataPermissions != null && dataPermissions.Any())
@@ -116,6 +101,41 @@ namespace DataAuth.Core
                 result.GrantedValues = allGrantedData.Distinct().ToArray();
             }
             return result;
+        }
+
+        public async Task<List<DataPermission>> GetDataPermissionEntities(
+            string subjectId,
+            string accessAttributeCode,
+            GrantType grantType,
+            string functionCode,
+            CancellationToken cancellationToken
+        )
+        {
+            var dataPermissions = await _dbContext.DataPermissions
+                .AsNoTracking()
+                .Include(x => x.AccessAttributeTable)
+                .ThenInclude(a => a!.AccessAttribute)
+                .Where(
+                    x =>
+                        x.SubjectId == subjectId
+                        && x.GrantType == grantType
+                        && x.AccessAttributeTable!.AccessAttribute!.Code == accessAttributeCode
+                        && x.FunctionCode == functionCode
+                )
+                .ToListAsync(cancellationToken);
+
+            // If subject is user then get all roles of the user and then get all permissions of those roles.
+            if (grantType == GrantType.ForUser)
+            {
+                var dataPermissionOfRoles = await GetPermissionsByUser(
+                    subjectId,
+                    accessAttributeCode,
+                    cancellationToken
+                );
+                dataPermissions.AddRange(dataPermissionOfRoles);
+            }
+
+            return dataPermissions;
         }
 
         private async Task<List<DataPermission>> GetPermissionsByUser(

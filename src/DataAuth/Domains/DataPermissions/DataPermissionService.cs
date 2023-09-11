@@ -33,7 +33,8 @@ namespace DataAuth.Domains.DataPermissions
             var cacheKey = CoreService.GetCacheKey(
                 entity.SubjectId,
                 entity.AccessAttributeTable!.AccessAttribute!.Code,
-                entity.GrantType
+                entity.GrantType,
+                entity.FunctionCode
             );
             _cacheProvider.Invalidate(cacheKey);
         }
@@ -47,6 +48,7 @@ namespace DataAuth.Domains.DataPermissions
             DataPermission entity = MapModelToEntity(model);
             await _dbContext.DataPermissions.AddAsync(entity, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
+            model.Id = entity.Id;
 
             await InvalidateCache(entity, cancellationToken);
         }

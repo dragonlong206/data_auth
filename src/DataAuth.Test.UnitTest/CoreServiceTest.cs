@@ -5,6 +5,7 @@ using DataAuth.Domains.AccessAttributeTables;
 using DataAuth.Domains.DataPermissions;
 using DataAuth.Entities;
 using DataAuth.Enums;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -159,18 +160,17 @@ namespace DataAuth.Test.UnitTest
             };
             await dataPermissionService.AddDataPermission(dataPermission2);
 
-            var permissionResult = await _coreService.GetDataPermissions<string>(
+            var permissionResult = await _coreService.GetDataPermissionEntities(
                 subjectId,
                 accessAttributeCode,
                 GrantType.ForUser,
-                null,
                 FunctionCode.Update,
                 default
             );
 
             Assert.IsNotNull(permissionResult);
-            Assert.AreEqual(1, permissionResult.PermissionDetails.Count());
-            Assert.AreEqual(dataPermission1.Id, permissionResult.PermissionDetails.ElementAt(0).Id);
+            Assert.AreEqual(1, permissionResult.Count());
+            Assert.AreEqual(dataPermission1.Id, permissionResult[0].Id);
         }
 
         [TestCategory("GenerateQuery")]
