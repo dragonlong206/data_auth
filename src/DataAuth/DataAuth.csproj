@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/dragonlong206/data_auth</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>data authorization, data security, data filtering, erp, enterprise</PackageTags>
-    <VersionPrefix>1.0.1</VersionPrefix>
+    <VersionPrefix>1.1.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
