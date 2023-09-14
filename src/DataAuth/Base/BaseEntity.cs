@@ -10,7 +10,7 @@ namespace DataAuth.Base
     {
         public BaseEntity()
         {
-            Id = default;
+            Id = default(TKey);
         }
 
         public BaseEntity(TKey id)

@@ -3,7 +3,6 @@
 namespace DataAuth.Core
 {
     public class DataPermissionResult<TKey>
-        where TKey : struct
     {
         public DataPermissionResult()
         {
@@ -26,12 +25,13 @@ namespace DataAuth.Core
         /// </summary>
         public IEnumerable<TKey>? GrantedValues { get; set; }
 
-        IEnumerable<DataPermissionResultDetail<TKey>> PermissionDetails { get; set; }
+        public IEnumerable<DataPermissionResultDetail<TKey>> PermissionDetails { get; set; }
     }
 
     public class DataPermissionResultDetail<TKey>
-        where TKey : struct
     {
+        public int Id { get; set; }
+
         /// <summary>
         /// Name of database table containing granted data.
         /// </summary>

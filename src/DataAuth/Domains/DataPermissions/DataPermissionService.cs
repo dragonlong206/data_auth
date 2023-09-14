@@ -33,7 +33,8 @@ namespace DataAuth.Domains.DataPermissions
             var cacheKey = CoreService.GetCacheKey(
                 entity.SubjectId,
                 entity.AccessAttributeTable!.AccessAttribute!.Code,
-                entity.GrantType
+                entity.GrantType,
+                entity.FunctionCode
             );
             _cacheProvider.Invalidate(cacheKey);
         }
@@ -47,6 +48,7 @@ namespace DataAuth.Domains.DataPermissions
             DataPermission entity = MapModelToEntity(model);
             await _dbContext.DataPermissions.AddAsync(entity, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
+            model.Id = entity.Id;
 
             await InvalidateCache(entity, cancellationToken);
         }
@@ -58,7 +60,8 @@ namespace DataAuth.Domains.DataPermissions
                 model.SubjectId,
                 model.AccessAttributeTableId,
                 model.AccessLevel,
-                model.GrantedDataValue
+                model.GrantedDataValue,
+                model.FunctionCode
             );
         }
 
@@ -80,6 +83,7 @@ namespace DataAuth.Domains.DataPermissions
             entity.AccessAttributeTableId = model.AccessAttributeTableId;
             entity.AccessLevel = model.AccessLevel;
             entity.GrantedDataValue = model.GrantedDataValue;
+            entity.FunctionCode = model.FunctionCode;
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -132,7 +136,7 @@ namespace DataAuth.Domains.DataPermissions
             return await query
                 .Select(
                     x =>
-                        new DataPermissionModel(x.SubjectId)
+                        new DataPermissionModel(x.SubjectId, x.FunctionCode)
                         {
                             Id = x.Id,
                             GrantType = x.GrantType,
@@ -165,7 +169,8 @@ namespace DataAuth.Domains.DataPermissions
                 GrantType = entity.GrantType,
                 AccessAttributeTableId = entity.AccessAttributeTableId,
                 AccessLevel = entity.AccessLevel,
-                GrantedDataValue = entity.GrantedDataValue
+                GrantedDataValue = entity.GrantedDataValue,
+                FunctionCode = entity.FunctionCode
             };
         }
 

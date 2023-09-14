@@ -21,14 +21,18 @@ namespace DataAuth.Sample.WebApi.Controllers
             string subjectId,
             string accessAttributeCode,
             GrantType grantType = GrantType.ForUser,
-            string? localLookupValue = null
+            string? functionCode = null,
+            string? localLookupValue = null,
+            CancellationToken cancellationToken = default
         )
         {
             return await _coreService.GetDataPermissions<int>(
                 subjectId,
                 accessAttributeCode,
                 grantType,
-                localLookupValue
+                localLookupValue,
+                functionCode ?? Enums.FunctionCode.All,
+                cancellationToken
             );
         }
 
@@ -46,7 +50,7 @@ namespace DataAuth.Sample.WebApi.Controllers
                 "ORDER_TYPE",
                 grantType,
                 localLookupValue,
-                cancellationToken
+                cancellationToken: cancellationToken
             );
         }
     }

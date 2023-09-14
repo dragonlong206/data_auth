@@ -1,10 +1,5 @@
 ﻿using DataAuth.Base;
 using DataAuth.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAuth.Entities
 {
@@ -21,6 +16,7 @@ namespace DataAuth.Entities
             SubjectId = subjectId;
             AccessAttributeTableId = accessAttributeTableId;
             AccessLevel = accessLevel;
+            FunctionCode = Enums.FunctionCode.All;
         }
 
         public DataPermission(
@@ -33,6 +29,19 @@ namespace DataAuth.Entities
             : this(grantType, subjectId, accessAttributeTableId, accessLevel)
         {
             GrantedDataValue = grantedDataValue;
+        }
+
+        public DataPermission(
+            GrantType grantType,
+            string subjectId,
+            int accessAttributeTableId,
+            AccessLevel accessLevel,
+            string? grantedDataValue,
+            string functionCode
+        )
+            : this(grantType, subjectId, accessAttributeTableId, accessLevel, grantedDataValue)
+        {
+            FunctionCode = functionCode;
         }
 
         public GrantType GrantType { get; set; }
@@ -52,5 +61,10 @@ namespace DataAuth.Entities
         /// When using access level Deep, this value is the root node of the granted data tree.
         /// </summary>
         public string? GrantedDataValue { get; set; }
+
+        /// <summary>
+        /// The function that you want to grant permission. Refer to FunctionCode class. Default value is "All".
+        /// </summary>
+        public string FunctionCode { get; set; }
     }
 }

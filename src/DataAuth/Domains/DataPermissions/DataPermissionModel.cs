@@ -5,9 +5,10 @@ namespace DataAuth.Domains.DataPermissions
 {
     public class DataPermissionModel : BaseModel<int>
     {
-        public DataPermissionModel(string subjectId)
+        public DataPermissionModel(string subjectId, string functionCode = Enums.FunctionCode.All)
         {
             SubjectId = subjectId;
+            FunctionCode = functionCode;
         }
 
         public GrantType GrantType { get; set; }
@@ -25,5 +26,10 @@ namespace DataAuth.Domains.DataPermissions
         /// When using access level Deep, this value is the root node of the granted data tree.
         /// </summary>
         public string? GrantedDataValue { get; set; }
+
+        /// <summary>
+        /// The function that you want to grant permission. Refer to FunctionCode class. Default value is "All".
+        /// </summary>
+        public string FunctionCode { get; set; }
     }
 }

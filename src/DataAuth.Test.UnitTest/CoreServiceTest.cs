@@ -2,14 +2,17 @@ using DataAuth.Cache;
 using DataAuth.Core;
 using DataAuth.Domains.AccessAttributes;
 using DataAuth.Domains.AccessAttributeTables;
+using DataAuth.Domains.DataPermissions;
 using DataAuth.Entities;
 using DataAuth.Enums;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DataAuth.Test.UnitTest
@@ -52,7 +55,7 @@ namespace DataAuth.Test.UnitTest
 
         [TestCategory("GetDataPermissions")]
         [TestMethod]
-        public async Task GettingDataAndSetToCacheWhenCacheEmpty()
+        public async Task GetDataAndSetToCacheWhenCacheEmpty()
         {
             var subjectId = Guid.NewGuid().ToString();
             var accessAttributeCode = "TEST";
@@ -98,6 +101,76 @@ namespace DataAuth.Test.UnitTest
 
             cacheProviderMock.Verify(c => c.Get<DataPermissionResult<int>>(cacheKey), Times.Once);
             cacheProviderMock.Verify(c => c.Set(cacheKey, permissions, 24), Times.Never);
+        }
+
+        private async Task<AccessAttributeTableModel> InitAccessAttribute(
+            string accessAttributeCode
+        )
+        {
+            var accessAttributeService = new AccessAttributeService(_dbContext);
+            var accessAttribute = new AccessAttributeModel(accessAttributeCode);
+            await accessAttributeService.AddAccessAttribute(accessAttribute);
+
+            var accessAttributeTableService = new AccessAttributeTableService(_dbContext);
+            var accessAttributeTable = new AccessAttributeTableModel(
+                accessAttribute.Id,
+                // Due to using EF, this table always exists.
+                "__EFMigrationsHistory",
+                "h",
+                "MigrationId",
+                "MigrationId",
+                false,
+                null,
+                1,
+                false,
+                null,
+                null,
+                null
+            );
+            await accessAttributeTableService.AddAccessAttributeTable(accessAttributeTable);
+            return accessAttributeTable;
+        }
+
+        [TestCategory("GetDataPermissions")]
+        [TestMethod]
+        public async Task GetDataPermissionByFunctionCode()
+        {
+            // Insert 2 different permissions for 2 differrent function codes, get data permission by one function code
+            // Assert that result match with the passing function code
+            var subjectId = Guid.NewGuid().ToString();
+            var accessAttributeCode = "TEST";
+
+            var accessAttributeTable = await InitAccessAttribute(accessAttributeCode);
+
+            var dataPermissionService = new DataPermissionService(_dbContext, _cacheProvider);
+            var dataPermission1 = new DataPermissionModel(subjectId, FunctionCode.Update)
+            {
+                AccessAttributeTableId = accessAttributeTable.Id,
+                GrantType = GrantType.ForUser,
+                AccessLevel = AccessLevel.Specific,
+                GrantedDataValue = "1"
+            };
+            await dataPermissionService.AddDataPermission(dataPermission1);
+
+            var dataPermission2 = new DataPermissionModel(subjectId, FunctionCode.Read)
+            {
+                AccessAttributeTableId = accessAttributeTable.Id,
+                GrantType = GrantType.ForUser,
+                AccessLevel = AccessLevel.Global
+            };
+            await dataPermissionService.AddDataPermission(dataPermission2);
+
+            var permissionResult = await _coreService.GetDataPermissionEntities(
+                subjectId,
+                accessAttributeCode,
+                GrantType.ForUser,
+                FunctionCode.Update,
+                default
+            );
+
+            Assert.IsNotNull(permissionResult);
+            Assert.AreEqual(1, permissionResult.Count());
+            Assert.AreEqual(dataPermission1.Id, permissionResult[0].Id);
         }
 
         [TestCategory("GenerateQuery")]

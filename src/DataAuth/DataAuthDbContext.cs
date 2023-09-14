@@ -1,4 +1,5 @@
 ﻿using DataAuth.Entities;
+using DataAuth.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAuth
@@ -24,8 +25,20 @@ namespace DataAuth
 
             modelBuilder.Entity<UserRole>().HasIndex(x => new { x.UserId, x.RoleId }).IsUnique();
 
+            modelBuilder
+                .Entity<DataPermission>()
+                .Property(p => p.FunctionCode)
+                .IsRequired()
+                .HasDefaultValue(FunctionCode.All);
+
             base.OnModelCreating(modelBuilder);
         }
+
+        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        // {
+        //     optionsBuilder.LogTo(Console.WriteLine);
+        //     base.OnConfiguring(optionsBuilder);
+        // }
 
         public virtual DbSet<AccessAttribute> AccessAttributes { get; set; }
 
