@@ -13,7 +13,7 @@ namespace DataAuth.Core
 {
     public static class EfExtensions
     {
-        private static IServiceProvider _serviceProvider;
+        private static IServiceProvider? _serviceProvider;
 
         public static void Initialize(IServiceProvider serviceProvider)
         {
